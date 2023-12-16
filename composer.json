@@ -1,0 +1,15 @@
+{
+    "name": "imissher/equinox",
+    "autoload": {
+        "psr-4": {
+            "Imissher\\Equinox\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "algrvvv",
+            "email": "alexandrgr25@gmail.com"
+        }
+    ],
+    "require": {}
+}
