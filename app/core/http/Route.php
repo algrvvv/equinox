@@ -3,6 +3,7 @@
 namespace Imissher\Equinox\app\core\http;
 
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\View;
 
 class Route
 {
@@ -19,15 +20,18 @@ class Route
      * @var Response
      */
     public Response $response;
+    public View $view;
 
     /**
      * @param Request $request
      * @param Response $response
+     * @param View $view
      */
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request, Response $response, View $view)
     {
         $this->request = $request;
         $this->response = $response;
+        $this->view = $view;
     }
 
     /**
@@ -70,10 +74,10 @@ class Route
 
         if (is_string($callback)) {
             /**
-             |--------------------------------------------------------------------------
-             | Рендер нужного шаблона, если указывается шаблон,
-             | а не колл бек или контроллер
-             |--------------------------------------------------------------------------
+             * |--------------------------------------------------------------------------
+             * | Рендер нужного шаблона, если указывается шаблон,
+             * | а не колл бек или контроллер
+             * |--------------------------------------------------------------------------
              */
             return $this->render($callback);
         }
@@ -97,40 +101,21 @@ class Route
     }
 
     /**
-     * @param string $view
-     * @param array $params
-     * @return 'content'
-     */
-    public function render(string $view, array $params = [])
-    {
-        return $layoutContent = 'get layout content';
-        $viewContent = $this->viewContent($view);
-        //return str_replace("{{content}}", $viewContent, $layoutContent);
-    }
-
-    /**
-     * @return void
-     */
-    protected function layoutContent()
-    {
-
-    }
-
-    /**
-     * Получение контента из view
+     * Рендер шаблонов
      *
      * @param string $view
-     * @return false|string
+     * @param array $params
+     * @return array|false|string
      */
-    protected function viewContent(string $view): false|string
+    public function render(string $view, array $params = []): array|false|string
     {
-        /**
-        |--------------------------------------------------------------------------
-        | Принимается только файлы расширения `.view.php`
-        |--------------------------------------------------------------------------
-        */
-        ob_start();
-        include_once Application::$ROOT_PATH . "/views/$view.view.php";;
-        return ob_get_clean();
+        $layoutContent = $this->view->layoutContent('layouts/template');
+        $viewContent = $this->view->viewContent($view);
+        if($content = $this->view->check_template($view)->execute())
+            return str_replace("{{ content }}", $content, $layoutContent);
+        else
+            return str_replace("{{ content }}", $viewContent, $layoutContent);
+
     }
+
 }

@@ -16,11 +16,11 @@ $app = new Application(dirname(__DIR__));
 |
 */
 
-$app->router->get('/', function (){
-    return "<br>home page<br>";
+$app->router->get('/call', function (){
+    return "<br>hello from callback<br>";
 });
 
-$app->router->get('/render', 'home');
+$app->router->get('/', 'home');
 
 $app->router->get('/test', [TestController::class, 'test']);
 

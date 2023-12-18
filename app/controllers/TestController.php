@@ -2,11 +2,13 @@
 
 namespace Imissher\Equinox\app\controllers;
 
-class TestController
+use Imissher\Equinox\app\core\Controller;
+
+class TestController extends Controller
 {
     public function test()
     {
-        return "<br>TEST<br>";
+        return $this->render();
     }
 
 }
