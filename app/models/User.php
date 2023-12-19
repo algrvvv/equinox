@@ -16,8 +16,8 @@ class User extends Model
         return [
             'login'            => ['required'],
             'email'            => ['email', 'required'],
-            'password'         => ['required'],
-            'password_confirm' => ['required']
+            'password'         => ['required', ['min' => 8]],
+            'password_confirm' => ['required', ['min' => 8]]
         ];
     }
 }

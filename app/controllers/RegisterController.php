@@ -19,7 +19,11 @@ class RegisterController extends Controller
             $user = new User();
 
             $user->getData($request->getBody());
-            $user->validate();
+            if($user->validate()){
+                echo "юзер прошел проверку";
+            } else {
+                echo "юзер не прошел проверку D:";
+            }
 
         } else {
             return $this->render('pages/register');
