@@ -9,7 +9,7 @@
     <br> <br>
 
     <label for="password_input">Введите пароль</label>
-    <input type="password" name="" id="password_input">
+    <input type="password" name="password" id="password_input">
     <br><br>
 
     <label for="password_confirm_input">Подтвердите пароль</label>
