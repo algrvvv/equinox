@@ -9,7 +9,7 @@ use Imissher\Equinox\app\core\http\Route;
 class Application
 {
     public static string $ROOT_PATH;
-    public Route $router;
+    public Route $route;
     public Response $response;
     public Request $request;
     public View $view;
@@ -22,7 +22,7 @@ class Application
         $this->request = new Request(); // Создания экземпляра класса Request
         $this->response = new Response(); // Создания экземпляра класса Response
         $this->view = new View();
-        $this->router = new Route($this->request, $this->response, $this->view); // Создания экземпляра класса Route
+        $this->route = new Route($this->request, $this->response, $this->view); // Создания экземпляра класса Route
     }
 
     /**
@@ -33,6 +33,6 @@ class Application
     public function run(): void
     {
         echo "Приложение работает <br>";
-        echo $this->router->resolve();
+        echo $this->route->resolve();
     }
 }

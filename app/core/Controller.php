@@ -6,6 +6,6 @@ class Controller
 {
     public function render(string $view, array $params = [])
     {
-        return Application::$app->router->render($view, $params);
+        return Application::$app->route->render($view, $params);
     }
 }
