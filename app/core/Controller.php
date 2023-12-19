@@ -4,8 +4,8 @@ namespace Imissher\Equinox\app\core;
 
 class Controller
 {
-    public function render()
+    public function render(string $view, array $params = [])
     {
-        require_once Application::$ROOT_PATH . '/views/test.view.php';
+        return Application::$app->router->render($view, $params);
     }
 }

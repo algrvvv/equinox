@@ -110,7 +110,7 @@ class Route
     public function render(string $view, array $params = []): array|false|string
     {
         $layoutContent = $this->view->layoutContent('layouts/template');
-        $viewContent = $this->view->viewContent($view);
+        $viewContent = $this->view->viewContent($view, $params);
         if($content = $this->view->check_template($view)->execute())
             return str_replace("{{ content }}", $content, $layoutContent);
         else

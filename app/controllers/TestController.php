@@ -6,9 +6,14 @@ use Imissher\Equinox\app\core\Controller;
 
 class TestController extends Controller
 {
-    public function test()
+    /**
+     * Обычный вариант контроллера
+     *
+     * @return false|array|string
+     */
+    public function test(): false|array|string
     {
-        return $this->render();
+        return $this->render('test', ["data" => "hello from params"]);
     }
 
 }

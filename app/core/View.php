@@ -9,7 +9,11 @@ class View
     private string $layoutContent;
     private string $viewContent;
 
-    public function check_template(string $view)
+    /**
+     * @param string $view
+     * @return $this
+     */
+    public function check_template(string $view): static
     {
         $viewTemplate = Application::$ROOT_PATH . "/views/$view.view.php";
         $lines = file($viewTemplate);
@@ -23,7 +27,10 @@ class View
     }
 
 
-    private function view_include()
+    /**
+     * @return array|string
+     */
+    private function view_include(): array|string
     {
         $templates = [];
 
@@ -57,6 +64,9 @@ class View
 
     }
 
+    /**
+     * @return array|false|string
+     */
     public function execute(): array|false|string
     {
         if (isset($this->temps['inc'])) {
@@ -72,13 +82,17 @@ class View
      * @param string $view
      * @return false|string
      */
-    public function viewContent(string $view): false|string
+    public function viewContent(string $view, array $params): false|string
     {
         /**
          * |--------------------------------------------------------------------------
          * | Принимается только файлы расширения `.view.php`
          * |--------------------------------------------------------------------------
          */
+        foreach ($params as $key => $value){
+            $$key = $value;
+        }
+
         ob_start();
         include_once Application::$ROOT_PATH . "/views/$view.view.php";
         $this->viewContent = ob_get_clean();

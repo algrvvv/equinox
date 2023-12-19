@@ -13,10 +13,12 @@ class Application
     public Response $response;
     public Request $request;
     public View $view;
+    public static Application $app;
 
     public function __construct(string $rootPath)
     {
         self::$ROOT_PATH = $rootPath; // Выбор директории веб приложения
+        self::$app = $this;
         $this->request = new Request(); // Создания экземпляра класса Request
         $this->response = new Response(); // Создания экземпляра класса Response
         $this->view = new View();
