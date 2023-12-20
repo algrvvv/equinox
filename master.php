@@ -26,7 +26,7 @@ $params = explode(':', $argv[1]);
 
 $command = $params[0] ?? ''; $param = $params[1] ?? '';
 
-$app = new Application(dirname(__DIR__), $config);
+$app = new Application(__DIR__, $config);
 
 
 if ($command === 'create') {

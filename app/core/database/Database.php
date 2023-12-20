@@ -1,13 +1,18 @@
 <?php
 
-namespace Imissher\Equinox\app\core;
+namespace Imissher\Equinox\app\core\database;
+
+use Imissher\Equinox\app\core\Application;
 
 class Database
 {
     public \PDO $pdo;
 
+    public Migration $migrate;
+
     public function __construct(array $db_config)
     {
+        $this->migrate = new Migration();
         $dsn = $db_config['dsn'] ?? '';
         $user = $db_config['user'] ?? '';
         $password = $db_config['password'] ?? '';
@@ -17,15 +22,22 @@ class Database
 
     public function applyMigration()
     {
-        $this->messageLog("Начинается миграция баз данных");
+        //$this->messageLog("Начинается миграция баз данных");
         $this->createMigrationTable();
         $appliedMigrations =$this->appliedMigrations();
 
-        if(!empty($appliedMigrations)){
+        /*if(!empty($appliedMigrations)){
             //TODO получение миграций
-        }
+        }*/
 
-        $this->messageLog("Нечего переносить");
+        $migrate = 'test_migration.php'; // тестовое название миграции
+        $pathToClass = Application::$ROOT_PATH . "/app/database/migrations/$migrate";
+        require_once $pathToClass;
+        $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migrate", PATHINFO_FILENAME);
+        $instance = new $className();
+        $instance->up();
+
+        //$this->messageLog("Нечего переносить");
     }
 
     /**
