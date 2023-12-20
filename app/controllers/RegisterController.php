@@ -4,6 +4,7 @@ namespace Imissher\Equinox\app\controllers;
 
 use Imissher\Equinox\app\core\Controller;
 use Imissher\Equinox\app\core\http\Request;
+use Imissher\Equinox\app\models\User;
 
 class RegisterController extends Controller
 {
@@ -14,9 +15,19 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        echo "<pre>";
-        print_r($request->getBody());
-        echo "</pre>";
-        exit;
+        if ($request->method() == 'post') {
+            $user = new User();
+
+            $user->getData($request->getBody());
+            if($user->validate()){
+                echo "юзер прошел проверку";
+            } else {
+                echo "юзер не прошел проверку D:";
+            }
+
+        } else {
+            return $this->render('pages/register');
+        }
+
     }
 }
