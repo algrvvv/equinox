@@ -6,7 +6,24 @@ use Imissher\Equinox\app\controllers\RegisterController;
 use Imissher\Equinox\app\controllers\TestController;
 use Imissher\Equinox\app\core\Application;
 
-$app = new Application(dirname(__DIR__));
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
+/**
+|--------------------------------------------------------------------------
+| $config => Массив полученных данных из `.env` файла, которые нужны
+| для конфигурации приложения.
+|--------------------------------------------------------------------------
+*/
+$config = [
+    'db' => [
+        'dsn'  => $_ENV['DB_DRIVER'].":host=".$_ENV['DB_HOST'].";post=".$_ENV['DB_PORT'].";dbname=".$_ENV['DB_NAME'],
+        'user' => $_ENV['DB_USERNAME'],
+        'password' => $_ENV['DB_PASSWORD']
+    ]
+];
+
+$app = new Application(dirname(__DIR__), $config);
 
 /*
 |--------------------------------------------------------------------------
