@@ -9,6 +9,7 @@ class Master
 
     public function __construct(array $config)
     {
+        if(count($config) == 1 && $config[0] === false) return;
         $this->app = Application::$app;
         foreach ($config as $item) {
             if ($item == 'master.php') continue;
@@ -16,7 +17,11 @@ class Master
             if (str_contains($item, ':')) {
                 try {
                     $command = explode(':', $config[1]);
-                    $this->{$command[0]}($command[1], $config[2]);
+                    if(isset($config[2])){
+                        $this->{$command[0]}($command[1], $config[2]);
+                    } else {
+                        $this->messageLog("Ошибка: Пропущен обязательный параметр");
+                    }
                 } catch (\Exception $e) {
                     echo $e->getMessage();
                 }

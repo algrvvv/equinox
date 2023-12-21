@@ -20,7 +20,8 @@ $config = [
         'dsn'  => $_ENV['DB_DRIVER'].":host=".$_ENV['DB_HOST'].";post=".$_ENV['DB_PORT'].";dbname=".$_ENV['DB_NAME'],
         'user' => $_ENV['DB_USERNAME'],
         'password' => $_ENV['DB_PASSWORD']
-    ]
+    ],
+    'master' => [false]
 ];
 
 $app = new Application(dirname(__DIR__), $config);
