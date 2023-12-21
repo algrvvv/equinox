@@ -20,24 +20,31 @@ class Database
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
-    public function applyMigration()
+    public function applyMigration(): void
     {
-        //$this->messageLog("Начинается миграция баз данных");
         $this->createMigrationTable();
-        $appliedMigrations =$this->appliedMigrations();
+        $appliedMigrations = $this->appliedMigrations();
+        $allMigrations = array_diff(scandir(Application::$ROOT_PATH . "/app/database/migrations"), [".", ".."]);
+        $migrations = array_diff($allMigrations, $appliedMigrations);
 
-        /*if(!empty($appliedMigrations)){
-            //TODO получение миграций
-        }*/
+        $new_migrations = [];
 
-        $migrate = 'test_migration.php'; // тестовое название миграции
-        $pathToClass = Application::$ROOT_PATH . "/app/database/migrations/$migrate";
-        require_once $pathToClass;
-        $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migrate", PATHINFO_FILENAME);
-        $instance = new $className();
-        $instance->up();
+        if (!empty($migrations)) {
+            foreach ($migrations as $migration) {
+                $pathToClass = Application::$ROOT_PATH . "/app/database/migrations/$migration";
+                require_once $pathToClass;
+                $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migration", PATHINFO_FILENAME);
+                $instance = new $className();
+                $instance->up();
+                $new_migrations[] = $migration;
+            }
 
-        //$this->messageLog("Нечего переносить");
+            if ($this->addNewMigration($new_migrations)) {
+                $this->messageLog("Перенос всех таблиц успешно завершен");
+            }
+        } else {
+            $this->messageLog("Нечего переносить");
+        }
     }
 
     /**
@@ -68,8 +75,20 @@ class Database
         return $statement->fetchAll(\PDO::FETCH_COLUMN);
     }
 
+    private function addNewMigration(array $migrations): bool
+    {
+        if (!empty($migrations)) {
+            foreach ($migrations as $migration) {
+                $statement = $this->pdo->prepare("INSERT INTO `migrations` (migration) VALUES ('$migration')");
+                return $statement->execute();
+            }
+        }
+
+        return true;
+    }
+
     private function messageLog(string $message): void
     {
-        echo "[" . date('Y-m-d H:i:s') ."] - " . $message . PHP_EOL;
+        echo "[" . date('Y-m-d H:i:s') . "] - " . $message . PHP_EOL;
     }
 }

@@ -15,6 +15,7 @@ class Application
     public Request $request;
     public View $view;
     public Database $db;
+    public Master $master;
     public static Application $app;
 
     public function __construct(string $rootPath, array $config)
@@ -26,6 +27,7 @@ class Application
         $this->db = new Database($config['db']);
         $this->view = new View();
         $this->route = new Route($this->request, $this->response, $this->view);
+        $this->master = new Master($config['master']);
     }
 
     /**
