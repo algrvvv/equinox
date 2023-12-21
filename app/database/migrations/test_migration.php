@@ -3,7 +3,6 @@
 namespace Imissher\Equinox\app\database\migrations;
 
 use Imissher\Equinox\app\core\database\Migration;
-use Imissher\Equinox\app\core\database\Schema;
 
 class test_migration extends Migration
 {
