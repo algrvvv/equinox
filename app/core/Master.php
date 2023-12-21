@@ -36,6 +36,7 @@ class Master
 
     private function create(string $type, string $name): void
     {
+        $filename = date('H_i_s_ymd', time()) . "_" . $name;
         switch ($type){
             case 'controller':
                 file_put_contents(Application::$ROOT_PATH . "/app/controllers/$name.php", "<?php
@@ -71,7 +72,7 @@ class $name extends Migration
         $this->table->dropTable('$name');
     }
 }";
-                file_put_contents(Application::$ROOT_PATH . "/app/database/migrations/$name.php", "$text");
+                file_put_contents(Application::$ROOT_PATH . "/app/database/migrations/$filename.php", "$text");
                 $this->messageLog(ucfirst($type) . " `$name` успешно создана");
                 break;
             default:
