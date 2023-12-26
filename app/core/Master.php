@@ -2,6 +2,8 @@
 
 namespace Imissher\Equinox\app\core;
 
+use Imissher\Equinox\app\core\exceptions\UndefinedMethod;
+
 class Master
 {
     private Application $app;
@@ -9,7 +11,8 @@ class Master
 
     public function __construct(array $config)
     {
-        if(count($config) == 1 && $config[0] === false) return;
+        if (count($config) == 1 || $config[0] === false) return;
+
         $this->app = Application::$app;
         foreach ($config as $item) {
             if ($item == 'master.php') continue;
@@ -17,8 +20,12 @@ class Master
             if (str_contains($item, ':')) {
                 try {
                     $command = explode(':', $config[1]);
-                    if(isset($config[2])){
-                        $this->{$command[0]}($command[1], $config[2]);
+                    if (isset($config[2])) {
+                        if(method_exists($this, $command[0])){
+                            $this->{$command[0]}($command[1], $config[2]);
+                        } else {
+                            throw new UndefinedMethod();
+                        }
                     } else {
                         $this->messageLog("Ошибка: Пропущен обязательный параметр");
                     }
@@ -31,7 +38,7 @@ class Master
             } elseif ($item === 'migrate') {
                 $this->migrate();
             } else {
-                echo "Используйте команду `php master.php --help` для того, чтобы узнать больше";
+                $this->messageLog("Используйте команду `php master.php --help` для того, чтобы узнать больше");
             }
 
 
@@ -39,10 +46,22 @@ class Master
 
     }
 
+    /**
+     * @throws UndefinedMethod|exceptions\MigrationError
+     */
+    private function drop(string $type, string $name)
+    {
+        if($type === 'table'){
+            Application::$app->db->downMigration($name);
+        } else {
+            throw new UndefinedMethod();
+        }
+    }
+
     private function create(string $type, string $name): void
     {
         $filename = date('H_i_s_ymd', time()) . "_" . $name;
-        switch ($type){
+        switch ($type) {
             case 'controller':
                 file_put_contents(Application::$ROOT_PATH . "/app/controllers/$name.php", "<?php
 namespace Imissher\Equinox\app\controllers;
@@ -99,6 +118,7 @@ class $name extends Migration
         `migrate` - для переноса всех таблиц бд\n
         `create:controller nameController` - для создания контроллера\n
         `create:migration nameMigration` - для создания миграции\n
+        `drop:table nameTable` - для удаление миграции\n
         
         Пример использования:
         php master.php create:controller TestController // создание контроллера с названием TestController

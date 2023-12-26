@@ -9,6 +9,8 @@ abstract class Model
     protected const RULE_MIN = 'min';
     protected const RULE_MAX = 'max';
 
+    //TODO RULE_UNIQUE, RULE_MATCH
+
     /**
      * Проверка на лишние данные в POST запросе
      * и инициализация нужных переменных

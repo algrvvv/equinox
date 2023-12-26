@@ -6,9 +6,9 @@ use Imissher\Equinox\app\core\database\Migration;
 
 class test_migration extends Migration
 {
-    public function up(): void
+    public function up()
     {
-        $this->table->create('test', function () {
+        return $this->table->create('test', function () {
             $this->table->id();
             $this->table->string('email')->unique();
             $this->table->string('password');
@@ -16,8 +16,8 @@ class test_migration extends Migration
         });
     }
 
-    public function down()
+    public function drop()
     {
-        $this->table->dropTable('test');
+        return $this->table->dropTable('test');
     }
 }

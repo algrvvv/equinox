@@ -80,6 +80,7 @@ class View
      * Получение контента из view
      *
      * @param string $view
+     * @param array $params
      * @return false|string
      */
     public function viewContent(string $view, array $params): false|string

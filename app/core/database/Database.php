@@ -3,6 +3,7 @@
 namespace Imissher\Equinox\app\core\database;
 
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\exceptions\MigrationError;
 
 class Database
 {
@@ -35,8 +36,8 @@ class Database
                 require_once $pathToClass;
                 $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migration", PATHINFO_FILENAME);
                 $instance = new $className();
-                $instance->up();
-                $new_migrations[] = $migration;
+                $db_name = $instance->up();
+                $new_migrations[$db_name] = $migration;
             }
 
             if ($this->addNewMigration($new_migrations)) {
@@ -45,6 +46,44 @@ class Database
         } else {
             $this->messageLog("Нечего переносить");
         }
+    }
+
+    /**
+     * @throws MigrationError
+     */
+    public function downMigration(string $table): void
+    {
+        $this->createMigrationTable();
+        $migration = $this->findTable($table);
+        if (gettype($migration) === "boolean") {
+            throw new MigrationError();
+        } else {
+            $migration = $migration['migration'];
+        }
+        if ($this->deleteMigration($table)) {
+            $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migration", PATHINFO_FILENAME);
+            $instance = new $className();
+            if ($instance->drop() !== false) {
+                $this->messageLog("Удаление завершено");
+            }
+
+        } else {
+            throw new MigrationError();
+        }
+
+    }
+
+    private function findTable(string $table)
+    {
+        $statement = $this->pdo->prepare("SELECT `migration` FROM `migrations` WHERE `dbname` = '$table'");
+        $statement->execute();
+        return $statement->fetch();
+    }
+
+    private function deleteMigration(string $table): bool
+    {
+        $statement = $this->pdo->prepare("DELETE FROM `migrations` WHERE `dbname` = '$table'");
+        return $statement->execute();
     }
 
     /**
@@ -58,6 +97,7 @@ class Database
             CREATE TABLE IF NOT EXISTS migrations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 migration VARCHAR(255),
+                dbname VARCHAR(255),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=INNODB;
         ");
@@ -78,8 +118,8 @@ class Database
     private function addNewMigration(array $migrations): bool
     {
         if (!empty($migrations)) {
-            foreach ($migrations as $migration) {
-                $statement = $this->pdo->prepare("INSERT INTO `migrations` (migration) VALUES ('$migration')");
+            foreach ($migrations as $db => $migration) {
+                $statement = $this->pdo->prepare("INSERT INTO `migrations` (migration, dbname) VALUES ('$migration', '$db')");
                 return $statement->execute();
             }
         }

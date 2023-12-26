@@ -3,6 +3,7 @@
 namespace Imissher\Equinox\app\core\http;
 
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\exceptions\NotFoundException;
 use Imissher\Equinox\app\core\View;
 
 class Route
@@ -60,6 +61,9 @@ class Route
         return $this;
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function resolve()
     {
         $method = $this->request->method();
@@ -67,9 +71,7 @@ class Route
         $callback = $this->routes[$method][$url] ?? false;
 
         if (!$callback) {
-            $this->response->setResponseCode(404);
-            //TODO переадресация на _404
-            return "404";
+            throw new NotFoundException();
         }
 
         if (is_string($callback)) {

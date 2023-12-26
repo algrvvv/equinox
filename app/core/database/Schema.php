@@ -53,11 +53,13 @@ class Schema
      * Удаление таблицы
      *
      * @param string $table
-     * @return void
+     * @return false|int
      */
-    public function dropTable(string $table): void
+    public function dropTable(string $table): false|int
     {
-        $this->query = 'DROP TABLE `$table`';
+        $this->query = "DROP TABLE `$table`";
+        $db = Application::$app->db;
+        return $db->pdo->exec($this->query);
     }
 
     /**

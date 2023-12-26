@@ -3,6 +3,7 @@
 namespace Imissher\Equinox\app\core;
 
 use Imissher\Equinox\app\core\database\Database;
+use Imissher\Equinox\app\core\exceptions\NotFoundException;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
 use Imissher\Equinox\app\core\http\Route;
@@ -37,6 +38,14 @@ class Application
      */
     public function run(): void
     {
-        echo $this->route->resolve();
+        try {
+            echo $this->route->resolve();
+        } catch (\Exception $e){
+            $this->response->setResponseCode($e->getCode());
+            echo $this->route->render('_error', [
+                'exception' => $e
+            ]);
+        }
+
     }
 }
