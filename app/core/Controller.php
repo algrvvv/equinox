@@ -17,7 +17,7 @@ class Controller
         return $this->route->render($view, $params);
     }
 
-    public function redirect(string $url)
+    public function redirect(string $url): static
     {
         $this->route->redirect($url);
         return $this;

@@ -27,7 +27,7 @@ class RegisterController extends Controller
                 ];
 
                 if($user->insert($attrs)){
-                    $this->redirect('/register')->with('success', 'Пользователь добавлен');
+                    $this->redirect('/')->with('success', 'Пользователь зарегистрирован');
                 }
 
             } else {
