@@ -10,8 +10,6 @@ abstract class Model
     protected const RULE_MAX = 'max';
     protected const RULE_UNIQUE = 'unique';
 
-    //TODO RULE_MATCH
-
     /**
      * Проверка на лишние данные в POST запросе
      * и инициализация нужных переменных
@@ -101,6 +99,8 @@ abstract class Model
         }
         $this->errors[$attr][] = $error;
     }
+
+    //TODO сделать функцию для кастомного добавления ошибки addErrorMessage
 
     /**
      * @return string[]

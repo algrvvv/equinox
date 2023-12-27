@@ -150,6 +150,11 @@ abstract class DbModel extends Model
         }
 
         $statement->execute();
+        $answer = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        if(count($answer) === 1)
+            return $answer[0];
+
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -157,6 +162,8 @@ abstract class DbModel extends Model
     {
         return $this->query;
     }
+
+    //TODO find and findOne functions
 
     private function getErrorFromSql(string $messageSql)
     {

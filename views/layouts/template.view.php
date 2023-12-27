@@ -4,7 +4,6 @@ use Imissher\Equinox\app\core\Application;
 
 ?>
 
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,6 +15,18 @@ use Imissher\Equinox\app\core\Application;
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
+
+<nav class="py-2 bg-light border-bottom">
+    <div class="container d-flex flex-wrap">
+        <ul class="nav me-auto">
+            <li class="nav-item"><a href="/" class="nav-link link-dark px-2 active" aria-current="page">Главная</a></li>
+        </ul>
+        <ul class="nav">
+            <li class="nav-item"><a href="/login" class="nav-link link-dark px-2">Вход</a></li>
+            <li class="nav-item"><a href="/register" class="nav-link link-dark px-2">Регистрация</a></li>
+        </ul>
+    </div>
+</nav>
 
 <div style="width: 75%; margin: 10px auto;">
     <?php if (Application::$app->session->getFlash('success')): ?>

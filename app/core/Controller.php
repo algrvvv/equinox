@@ -7,9 +7,11 @@ use JetBrains\PhpStorm\NoReturn;
 class Controller
 {
     private http\Route $route;
+    protected Session $session;
     public function __construct()
     {
         $this->route = Application::$app->route;
+        $this->session = Application::$app->session;
     }
 
     public function render(string $view, array $params = []): false|array|string

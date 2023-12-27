@@ -14,6 +14,4 @@ class Response
     {
         http_response_code($code);
     }
-
-    //TODO function redirect, redirect()->with('session_name', 'session_value');
 }

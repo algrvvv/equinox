@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+use Imissher\Equinox\app\controllers\LoginController;
 use Imissher\Equinox\app\controllers\RegisterController;
 use Imissher\Equinox\app\controllers\TestController;
 use Imissher\Equinox\app\core\Application;
@@ -45,6 +46,11 @@ $app->route->get('/test', [TestController::class, 'test']);
 
 $app->route->get('/register', [RegisterController::class, 'index']);
 $app->route->post('/register', [RegisterController::class, 'store']);
+
+//TODO user->login -> route, controller, session, login (in app) + (isGuest etc.)
+
+$app->route->get('/login', [LoginController::class, 'index']);
+$app->route->post('/login', [LoginController::class, 'login']);
 
 /*
 |--------------------------------------------------------------------------
