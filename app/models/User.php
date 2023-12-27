@@ -2,9 +2,9 @@
 
 namespace Imissher\Equinox\app\models;
 
-use Imissher\Equinox\app\core\Model;
+use Imissher\Equinox\app\core\database\DbModel;
 
-class User extends Model
+class User extends DbModel
 {
     public string $login = '';
     public string $email = '';
@@ -15,9 +15,14 @@ class User extends Model
     {
         return [
             'login'            => ['required'],
-            'email'            => ['email', 'required'],
+            'email'            => ['email', 'required', 'unique'],
             'password'         => ['required', ['min' => 8]],
             'password_confirm' => ['required', ['min' => 8]]
         ];
+    }
+
+    protected function tableName(): string
+    {
+        return 'users';
     }
 }

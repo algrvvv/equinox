@@ -2,9 +2,10 @@
 
 namespace Imissher\Equinox\app\core\http;
 
-use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\NotFoundException;
+use Imissher\Equinox\app\core\Session;
 use Imissher\Equinox\app\core\View;
+
 
 class Route
 {
@@ -22,17 +23,20 @@ class Route
      */
     public Response $response;
     public View $view;
+    public Session $session;
 
     /**
      * @param Request $request
      * @param Response $response
      * @param View $view
+     * @param Session $session
      */
-    public function __construct(Request $request, Response $response, View $view)
+    public function __construct(Request $request, Response $response, View $view, Session $session)
     {
         $this->request = $request;
         $this->response = $response;
         $this->view = $view;
+        $this->session = $session;
     }
 
     /**
@@ -113,11 +117,22 @@ class Route
     {
         $layoutContent = $this->view->layoutContent('layouts/template');
         $viewContent = $this->view->viewContent($view, $params);
-        if($content = $this->view->check_template($view)->execute())
+        if ($content = $this->view->check_template($view)->execute())
             return str_replace("{{ content }}", $content, $layoutContent);
         else
             return str_replace("{{ content }}", $viewContent, $layoutContent);
 
+    }
+
+    public function redirect(string $url): static
+    {
+        header("Location: $url");
+        return $this;
+    }
+
+    public function with(string $sub, string $message): void
+    {
+        $this->session->setFlash($sub, $message);
     }
 
 }

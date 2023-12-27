@@ -17,6 +17,7 @@ class Application
     public View $view;
     public Database $db;
     public Master $master;
+    public Session $session;
     public static Application $app;
 
     public function __construct(string $rootPath, array $config)
@@ -27,7 +28,8 @@ class Application
         $this->response = new Response();
         $this->db = new Database($config['db']);
         $this->view = new View();
-        $this->route = new Route($this->request, $this->response, $this->view);
+        $this->session = new Session();
+        $this->route = new Route($this->request, $this->response, $this->view, $this->session);
         $this->master = new Master($config['master']);
     }
 
@@ -41,7 +43,11 @@ class Application
         try {
             echo $this->route->resolve();
         } catch (\Exception $e){
-            $this->response->setResponseCode($e->getCode());
+            if(gettype($e->getCode()) === 'string'){
+                $this->response->setResponseCode(500);
+            } else {
+                $this->response->setResponseCode($e->getCode());
+            }
             echo $this->route->render('_error', [
                 'exception' => $e
             ]);

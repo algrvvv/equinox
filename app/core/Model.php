@@ -8,23 +8,28 @@ abstract class Model
     protected const RULE_EMAIL = 'email';
     protected const RULE_MIN = 'min';
     protected const RULE_MAX = 'max';
+    protected const RULE_UNIQUE = 'unique';
 
-    //TODO RULE_UNIQUE, RULE_MATCH
+    //TODO RULE_MATCH
 
     /**
      * Проверка на лишние данные в POST запросе
      * и инициализация нужных переменных
      *
      * @param array $data
-     * @return void
+     * @return array
      */
-    public function getData(array $data): void
+    public function getData(array $data): array
     {
+        $userData = [];
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
+                $userData[$key] = $value;
             }
         }
+
+        return $userData;
     }
 
     abstract protected function rules(): array;
@@ -44,15 +49,15 @@ abstract class Model
                 $ruleName = $rule;
                 if (!is_string($ruleName)) {
                     $ruleName = array_keys($rule)[0];
-                    $ruleValue = $rule[$ruleName];
+                    $ruleValue = $rule[$ruleName] ?? null;
                 }
 
                 if ($ruleName === self::RULE_REQUIRED && !$variable_value) {
-                    $this->addError(self::RULE_REQUIRED, $key);
+                    $this->addError(self::RULE_REQUIRED, $key, [$ruleName => $key]);
                 }
 
                 if ($ruleName === self::RULE_EMAIL && !filter_var($variable_value, FILTER_VALIDATE_EMAIL)) {
-                    $this->addError(self::RULE_EMAIL, $key);
+                    $this->addError(self::RULE_EMAIL, $key, [$ruleName => $key]);
                 }
 
                 if ($ruleName === self::RULE_MIN && strlen($variable_value) < $ruleValue) {
@@ -61,6 +66,18 @@ abstract class Model
 
                 if ($ruleName === self::RULE_MAX && strlen($variable_value) > $ruleValue) {
                     $this->addError(self::RULE_MAX, $key, [$ruleName => $ruleValue]);
+                }
+                
+                if($ruleName === self::RULE_UNIQUE){
+                    $tableName = $this->tableName();
+                    $db = Application::$app->db->pdo;
+                    $statement = $db->prepare("SELECT COUNT(*) as 'count' FROM `$tableName` WHERE `$key` = '$variable_value'");
+                    $statement->execute();
+                    $count = $statement->fetch()['count'];
+
+                    if($count >= 1){
+                        $this->addError(self::RULE_UNIQUE, $key, [$ruleName => $variable_value]);
+                    }
                 }
             }
         }
@@ -91,10 +108,11 @@ abstract class Model
     private function errorMessage(): array
     {
         return [
-            self::RULE_REQUIRED => 'Это поле обязательное',
-            self::RULE_EMAIL => 'В этом поле должен быть действительный адрес электронной почты',
+            self::RULE_REQUIRED => 'Поле {required} обязательное',
+            self::RULE_EMAIL => 'В поле {email} должен быть действительный адрес электронной почты',
             self::RULE_MIN => 'Минимальная длина этого поля {min}',
             self::RULE_MAX => 'Максимальная длина этого поля {max}',
+            self::RULE_UNIQUE => 'Поле со значение {unique} уже существует',
         ];
     }
 
@@ -106,11 +124,18 @@ abstract class Model
      */
     public function hasErrors(string $field): bool
     {
-        return (bool) $this->errors[$field];
+        return (bool)$this->errors[$field];
     }
 
-    public function getFirstError(string $field)
+    public function getFirstError(string $field = '')
     {
-        return $this->errors[$field][0];
+        $firstField = array_keys($this->errors)[0];
+        if($field !== '') return $this->errors[$field][0];
+        return $this->errors[$firstField][0];
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

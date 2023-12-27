@@ -8,7 +8,7 @@ use Imissher\Equinox\app\models\User;
 
 class RegisterController extends Controller
 {
-    public function index()
+    public function index(): false|array|string
     {
         return $this->render('pages/register');
     }
@@ -18,11 +18,20 @@ class RegisterController extends Controller
         if ($request->method() == 'post') {
             $user = new User();
 
-            $user->getData($request->getBody());
-            if($user->validate()){
-                echo "юзер прошел проверку";
+            $userData = $user->getData($request->getBody());
+            if ($user->validate()) {
+                $attrs = [
+                    'login' => $userData['login'],
+                    'email' => $userData['email'],
+                    'password' => password_hash($userData['password'], PASSWORD_BCRYPT),
+                ];
+
+                if($user->insert($attrs)){
+                    $this->redirect('/register')->with('success', 'Пользователь добавлен');
+                }
+
             } else {
-                echo "юзер не прошел проверку D:";
+                $this->redirect('/register')->with('error', $user->getFirstError());
             }
 
         } else {

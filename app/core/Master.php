@@ -60,7 +60,7 @@ class Master
 
     private function create(string $type, string $name): void
     {
-        $filename = date('H_i_s_ymd', time()) . "_" . $name;
+        $filename = 'm' . date('His_ymd', time()) . "_" . $name;
         switch ($type) {
             case 'controller':
                 file_put_contents(Application::$ROOT_PATH . "/app/controllers/$name.php", "<?php
@@ -79,11 +79,11 @@ namespace Imissher\Equinox\app\database\migrations;
 
 use Imissher\Equinox\app\core\database\Migration;
 
-class $name extends Migration
+class $filename extends Migration
 {
-    public function up(): void
+    public function up(): bool|string
     {
-        $this->table->create('$name', function () {
+        return $this->table->create('$name', function () {
             $this->table->id();
             $this->table->string('email')->unique();
             $this->table->string('password');
@@ -91,9 +91,9 @@ class $name extends Migration
         });
     }
 
-    public function down()
+    public function drop(): false|int
     {
-        $this->table->dropTable('$name');
+        return $this->table->dropTable('$name');
     }
 }";
                 file_put_contents(Application::$ROOT_PATH . "/app/database/migrations/$filename.php", "$text");
