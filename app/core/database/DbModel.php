@@ -163,8 +163,7 @@ abstract class DbModel extends Model
         return $this->query;
     }
 
-    //TODO find and findOne functions
-
+    //TODO разобраться с этой функцией
     private function getErrorFromSql(string $messageSql)
     {
         $sql = explode(' ', $messageSql);

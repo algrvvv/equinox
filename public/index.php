@@ -22,7 +22,8 @@ $config = [
         'user' => $_ENV['DB_USERNAME'],
         'password' => $_ENV['DB_PASSWORD']
     ],
-    'master' => [false]
+    'master' => [false],
+    'display_error' => $_ENV['DISPLAY_ERROR']
 ];
 
 $app = new Application(dirname(__DIR__), $config);
@@ -42,15 +43,20 @@ $app->route->get('/call', function (){
 
 $app->route->get('/', 'home');
 
+$app->route->get('/profile', [TestController::class, 'profile'])
+    ->middleware('auth');
+
 $app->route->get('/test', [TestController::class, 'test']);
 
 $app->route->get('/register', [RegisterController::class, 'index']);
 $app->route->post('/register', [RegisterController::class, 'store']);
 
-//TODO user->login -> route, controller, session, login (in app) + (isGuest etc.)
-
 $app->route->get('/login', [LoginController::class, 'index']);
 $app->route->post('/login', [LoginController::class, 'login']);
+
+$app->route->post('/logout', [LoginController::class, 'logout']);
+
+//TODO middlewares
 
 /*
 |--------------------------------------------------------------------------

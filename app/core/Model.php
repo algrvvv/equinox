@@ -100,8 +100,6 @@ abstract class Model
         $this->errors[$attr][] = $error;
     }
 
-    //TODO сделать функцию для кастомного добавления ошибки addErrorMessage
-
     /**
      * @return string[]
      */

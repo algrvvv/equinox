@@ -13,7 +13,8 @@ $config = [
         'user' => $_ENV['DB_USERNAME'],
         'password' => $_ENV['DB_PASSWORD']
     ],
-    'master' => $argv
+    'master' => $argv,
+    'display_error' => $_ENV['DISPLAY_ERROR']
 ];
 
 $app = new Application(__DIR__, $config);

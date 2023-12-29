@@ -124,4 +124,11 @@ class Route
         $this->session->setFlash($sub, $message);
     }
 
+    public function middleware(string $rule)
+    {
+        //TODO сделать прием мидлов разными типами данных -> str / array
+        $kernel = new Kernel($rule);
+        //TODO попробовать разобраться с деструтором, но скорее всего в этой ситуации он не поможет
+    }
+
 }

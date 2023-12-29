@@ -3,9 +3,12 @@
 namespace Imissher\Equinox\app\core;
 
 use Imissher\Equinox\app\core\exceptions\UndefinedMethod;
+use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
 class Master
 {
+    use MessageLogTrait;
+
     private Application $app;
     private string $table = '$this->table';
 
@@ -123,11 +126,6 @@ class $filename extends Migration
         Пример использования:
         php master.php create:controller TestController // создание контроллера с названием TestController
         ";
-    }
-
-    private function messageLog(string $message): void
-    {
-        echo "[" . date('Y-m-d H:i:s') . "] - " . $message . PHP_EOL;
     }
 
 }

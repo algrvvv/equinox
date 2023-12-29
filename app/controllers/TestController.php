@@ -16,4 +16,9 @@ class TestController extends Controller
         return $this->render('test', ["data" => "hello from params"]);
     }
 
+    public function profile()
+    {
+        return $this->render('pages/profile');
+    }
+
 }

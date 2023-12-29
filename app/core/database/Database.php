@@ -4,9 +4,11 @@ namespace Imissher\Equinox\app\core\database;
 
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\MigrationError;
+use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
 class Database
 {
+    use MessageLogTrait;
     public \PDO $pdo;
 
     public Migration $migrate;
@@ -127,8 +129,4 @@ class Database
         return true;
     }
 
-    private function messageLog(string $message): void
-    {
-        echo "[" . date('Y-m-d H:i:s') . "] - " . $message . PHP_EOL;
-    }
 }

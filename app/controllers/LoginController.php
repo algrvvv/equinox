@@ -5,6 +5,7 @@ use Imissher\Equinox\app\core\Controller;
 use Imissher\Equinox\app\core\exceptions\ReceivingData;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\models\User;
+use JetBrains\PhpStorm\NoReturn;
 
 class LoginController extends Controller
 {
@@ -16,7 +17,7 @@ class LoginController extends Controller
     /**
      * @throws ReceivingData
      */
-    public function login(Request $request)
+    public function login(Request $request): void
     {
         if ($request->isPost()){
             $user = new User();
@@ -37,6 +38,16 @@ class LoginController extends Controller
         } else {
             $this->redirect('/');
         }
+    }
 
+    #[NoReturn] public function logout(): void
+    {
+        $uid = $this->session->get('user');
+
+        if(!$uid) $this->redirect('/')->with('error', 'У вас нет доступа к этой странице');
+
+        
+        $this->session->remove('user');
+        $this->redirect('/')->with('success', 'Вы успешно вышли из своего аккаунта');
     }
 }

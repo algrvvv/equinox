@@ -4,9 +4,12 @@ namespace Imissher\Equinox\app\core\database;
 
 use Exception;
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
 class Schema
 {
+    use MessageLogTrait;
+
     private string $query;
     private array $variables = [];
 
@@ -124,8 +127,4 @@ class Schema
         $this->variables[$variable] .= " UNIQUE";
     }
 
-    private function messageLog(string $message): void
-    {
-        echo "[" . date('Y-m-d H:i:s') . "] - " . $message . PHP_EOL;
-    }
 }
