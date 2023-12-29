@@ -26,6 +26,7 @@ use Imissher\Equinox\app\core\Application;
                     <li class="nav-item"><a href="/login" class="nav-link link-dark px-2">Вход</a></li>
                     <li class="nav-item"><a href="/register" class="nav-link link-dark px-2">Регистрация</a></li>
                 <?php else : ?>
+                    <li class="nav-item"><a href="/profile" class="nav-link link-dark px-2">Профиль</a></li>
                     <li class="nav-item">
                         <form action="/logout" method="post"><button class="nav-link link-dark px-2" type="submit">Выход</button></form>
                     </li>

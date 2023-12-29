@@ -43,10 +43,12 @@ $app->route->get('/call', function (){
 
 $app->route->get('/', 'home');
 
-$app->route->get('/profile', [TestController::class, 'profile'])
-    ->middleware('auth');
+$app->route->middleware('auth')
+    ->get('/profile', [TestController::class, 'profile']);
 
-$app->route->get('/test', [TestController::class, 'test']);
+
+$app->route->middleware('auth')
+    ->get('/test', [TestController::class, 'test']);
 
 $app->route->get('/register', [RegisterController::class, 'index']);
 $app->route->post('/register', [RegisterController::class, 'store']);
@@ -56,7 +58,6 @@ $app->route->post('/login', [LoginController::class, 'login']);
 
 $app->route->post('/logout', [LoginController::class, 'logout']);
 
-//TODO middlewares
 
 /*
 |--------------------------------------------------------------------------

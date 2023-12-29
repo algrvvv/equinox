@@ -4,6 +4,7 @@ namespace Imissher\Equinox\app\core\http\middlewares;
 
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\Helpers\RouteTrait;
+use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Route;
 use Imissher\Equinox\app\core\Session;
 
@@ -21,6 +22,11 @@ abstract class Middleware
         $this->__routeTraitConstruct();
     }
 
-    abstract public function handler();
+    protected function getUrl(): string
+    {
+        return Application::$app->request->getUrl();
+    }
+
+    abstract public function handler(string $url);
 
 }

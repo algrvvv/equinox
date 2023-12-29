@@ -2,6 +2,7 @@
 
 namespace Imissher\Equinox\app\core\http;
 
+use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\NotFoundException;
 use Imissher\Equinox\app\core\Session;
 use Imissher\Equinox\app\core\View;
@@ -9,6 +10,7 @@ use Imissher\Equinox\app\core\View;
 
 class Route
 {
+    private string|array|null $rule = null;
     /**
      * @var array
      */
@@ -25,6 +27,8 @@ class Route
     public View $view;
     public Session $session;
 
+    protected Kernel $middlewareKernel;
+
     /**
      * @param Request $request
      * @param Response $response
@@ -33,6 +37,7 @@ class Route
      */
     public function __construct(Request $request, Response $response, View $view, Session $session)
     {
+        $this->middlewareKernel = new Kernel();
         $this->request = $request;
         $this->response = $response;
         $this->view = $view;
@@ -48,6 +53,11 @@ class Route
      */
     public function get(string $route, mixed $callback): static
     {
+        if(!is_null($this->rule)){
+            $this->middlewareKernel->handler($this->rule, $route);
+            $this->rule = null;
+        }
+
         $this->routes['get'][$route] = $callback;
         return $this;
     }
@@ -61,6 +71,7 @@ class Route
      */
     public function post(string $route, mixed $callback): static
     {
+        //TODO сделать мидлы для post запросов
         $this->routes['post'][$route] = $callback;
         return $this;
     }
@@ -124,11 +135,12 @@ class Route
         $this->session->setFlash($sub, $message);
     }
 
-    public function middleware(string $rule)
+    public function middleware(string|array $rule): static
     {
+        $this->rule = $rule;
         //TODO сделать прием мидлов разными типами данных -> str / array
-        $kernel = new Kernel($rule);
         //TODO попробовать разобраться с деструтором, но скорее всего в этой ситуации он не поможет
+        return $this;
     }
 
 }

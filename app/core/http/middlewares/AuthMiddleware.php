@@ -6,10 +6,10 @@ use Imissher\Equinox\app\core\Application;
 
 class AuthMiddleware extends Middleware
 {
-    public function handler()
+    public function handler(string $url): void
     {
         $isGuest = Application::isGuest();
 
-        if ($isGuest) echo "ты гость";
+        if ($isGuest) $this->redirect('/');
     }
 }
