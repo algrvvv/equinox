@@ -12,7 +12,7 @@ if((float)phpversion() < 8.1) {
 
 use Imissher\Equinox\app\controllers\LoginController;
 use Imissher\Equinox\app\controllers\RegisterController;
-use Imissher\Equinox\app\controllers\TestController;
+use Imissher\Equinox\app\controllers\ProfileController;
 use Imissher\Equinox\app\core\Application;
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
@@ -31,7 +31,8 @@ $config = [
         'password' => $_ENV['DB_PASSWORD']
     ],
     'master' => [false],
-    'display_error' => $_ENV['DISPLAY_ERROR']
+    'display_error' => $_ENV['DISPLAY_ERROR'],
+    'app_version' => $_ENV['APP_VERSION']
 ];
 
 $app = new Application(dirname(__DIR__), $config);
@@ -45,15 +46,9 @@ $app = new Application(dirname(__DIR__), $config);
 |
 */
 
-$app->route->get('/call', function (){
-    return "<br>hello from callback<br>";
-});
-
 $app->route->get('/', 'home');
 
-$app->route->get('/profile', [TestController::class, 'profile'])->middleware('auth');
-
-$app->route->get('/test', [TestController::class, 'test']);
+$app->route->get('/profile', [ProfileController::class, 'profile'])->middleware('auth');
 
 $app->route->get('/register', [RegisterController::class, 'index'])->middleware('guest');
 $app->route->post('/register', [RegisterController::class, 'store'])->middleware('guest');

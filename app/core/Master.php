@@ -124,7 +124,7 @@ class $filename extends Migration
         `drop:table nameTable` - для удаление миграции\n
         
         Пример использования:
-        php master.php create:controller TestController // создание контроллера с названием TestController
+        php master.php create:controller ProfileController // создание контроллера с названием ProfileController
         ";
     }
 

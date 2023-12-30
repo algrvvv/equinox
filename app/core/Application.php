@@ -12,6 +12,7 @@ use Imissher\Equinox\app\core\http\Route;
 class Application
 {
     public static string $ROOT_PATH;
+    private static string $APP_VERSION;
     public Route $route;
     public Response $response;
     public Request $request;
@@ -27,6 +28,7 @@ class Application
         if($d_error_status === 'false') error_reporting(0); // false -> отключение отображения ошибок
 
         self::$ROOT_PATH = $rootPath; // Выбор директории веб приложения
+        self::$APP_VERSION = $config['app_version'];
         self::$app = $this;
         $this->request = new Request();
         $this->response = new Response();
@@ -64,5 +66,16 @@ class Application
         $status = self::$app->session->get('user');
         
         return !is_int($status);
+    }
+
+    public static function style(string $path): void
+    {
+        $link = $_SERVER['HTTP_X_FORWARDED_PROTO'] . "://" . $_SERVER['HTTP_HOST'];
+        echo "<link rel='stylesheet' href='" . $link ."/$path'>";
+    }
+
+    public static function app_version(): string
+    {
+        return self::$APP_VERSION;
     }
 }

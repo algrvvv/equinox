@@ -14,7 +14,8 @@ $config = [
         'password' => $_ENV['DB_PASSWORD']
     ],
     'master' => $argv,
-    'display_error' => $_ENV['DISPLAY_ERROR']
+    'display_error' => $_ENV['DISPLAY_ERROR'],
+    'app_version' => $_ENV['APP_VERSION']
 ];
 
 $app = new Application(__DIR__, $config);
