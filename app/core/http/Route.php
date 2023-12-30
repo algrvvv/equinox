@@ -2,7 +2,6 @@
 
 namespace Imissher\Equinox\app\core\http;
 
-use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\NotFoundException;
 use Imissher\Equinox\app\core\Session;
 use Imissher\Equinox\app\core\View;
@@ -10,7 +9,14 @@ use Imissher\Equinox\app\core\View;
 
 class Route
 {
-    private string|array|null $rule = null;
+    /**
+     * @var string|array|null
+     */
+    private string|array|null $current_url = null;
+    /**
+     * @var string|null
+     */
+    private ?string $current_method = null;
     /**
      * @var array
      */
@@ -24,9 +30,18 @@ class Route
      * @var Response
      */
     public Response $response;
+    /**
+     * @var View
+     */
     public View $view;
+    /**
+     * @var Session
+     */
     public Session $session;
 
+    /**
+     * @var Kernel
+     */
     protected Kernel $middlewareKernel;
 
     /**
@@ -53,11 +68,8 @@ class Route
      */
     public function get(string $route, mixed $callback): static
     {
-        if(!is_null($this->rule)){
-            $this->middlewareKernel->handler($this->rule, $route);
-            $this->rule = null;
-        }
-
+        $this->current_url = $route;
+        $this->current_method = 'get';
         $this->routes['get'][$route] = $callback;
         return $this;
     }
@@ -71,7 +83,8 @@ class Route
      */
     public function post(string $route, mixed $callback): static
     {
-        //TODO сделать мидлы для post запросов
+        $this->current_url = $route;
+        $this->current_method = 'post';
         $this->routes['post'][$route] = $callback;
         return $this;
     }
@@ -81,6 +94,8 @@ class Route
      */
     public function resolve()
     {
+        $this->middlewareKernel->start();
+
         $method = $this->request->method();
         $url = $this->request->getUrl();
         $callback = $this->routes[$method][$url] ?? false;
@@ -124,22 +139,37 @@ class Route
 
     }
 
+    /**
+     * @param string $url
+     * @return $this
+     */
     public function redirect(string $url): static
     {
         header("Location: $url");
         return $this;
     }
 
+    /**
+     * @param string $sub
+     * @param string $message
+     * @return void
+     */
     public function with(string $sub, string $message): void
     {
         $this->session->setFlash($sub, $message);
     }
 
-    public function middleware(string|array $rule): static
+
+    /**
+     * @param string|array $rule
+     * @return false|$this
+     */
+    public function middleware(string|array $rule): false|static
     {
-        $this->rule = $rule;
-        //TODO сделать прием мидлов разными типами данных -> str / array
-        //TODO попробовать разобраться с деструтором, но скорее всего в этой ситуации он не поможет
+        if (is_null($this->current_url) || is_null($this->current_method)) return false;
+        $this->middlewareKernel->handler($rule, $this->current_url, $this->current_method);
+        $this->current_url = null;
+        $this->current_method = null;
         return $this;
     }
 

@@ -42,6 +42,7 @@ class LoginController extends Controller
 
     #[NoReturn] public function logout(): void
     {
+        echo "вы вышли из аккаунта";
         $uid = $this->session->get('user');
 
         if(!$uid) $this->redirect('/')->with('error', 'У вас нет доступа к этой странице');

@@ -10,4 +10,9 @@ trait RequestTrait
     {
         return Application::$app->request->getUrl();
     }
+
+    public function getMethod(): string
+    {
+        return Application::$app->request->method();
+    }
 }

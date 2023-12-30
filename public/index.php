@@ -43,21 +43,17 @@ $app->route->get('/call', function (){
 
 $app->route->get('/', 'home');
 
-$app->route->middleware('auth')
-    ->get('/profile', [TestController::class, 'profile']);
+$app->route->get('/profile', [TestController::class, 'profile'])->middleware('auth');
 
+$app->route->get('/test', [TestController::class, 'test']);
 
-$app->route->middleware('auth')
-    ->get('/test', [TestController::class, 'test']);
+$app->route->get('/register', [RegisterController::class, 'index'])->middleware('guest');
+$app->route->post('/register', [RegisterController::class, 'store'])->middleware('guest');
 
-$app->route->get('/register', [RegisterController::class, 'index']);
-$app->route->post('/register', [RegisterController::class, 'store']);
-
-$app->route->get('/login', [LoginController::class, 'index']);
-$app->route->post('/login', [LoginController::class, 'login']);
+$app->route->get('/login', [LoginController::class, 'index'])->middleware('guest');
+$app->route->post('/login', [LoginController::class, 'login'])->middleware('guest');
 
 $app->route->post('/logout', [LoginController::class, 'logout']);
-
 
 /*
 |--------------------------------------------------------------------------
