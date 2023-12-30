@@ -2,6 +2,14 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+/**
+ * Проверка на совместимость версий php
+ */
+if((float)phpversion() < 8.1) {
+    echo "Require a PHP version >= 8.1.0 You are running " . phpversion();
+    exit;
+}
+
 use Imissher\Equinox\app\controllers\LoginController;
 use Imissher\Equinox\app\controllers\RegisterController;
 use Imissher\Equinox\app\controllers\TestController;

@@ -90,6 +90,44 @@ class Route
     }
 
     /**
+     * Добавление DELETE запросов
+     *
+     * @param string $route
+     * @param mixed $callback
+     * @return $this
+     */
+    public function delete(string $route, mixed $callback): static
+    {
+        $this->current_url = $route;
+        $this->current_method = 'delete';
+        $this->routes['delete'][$route] = $callback;
+        return $this;
+    }
+
+    /**
+     * Добавление PUT запросов
+     *
+     * @param string $route
+     * @param mixed $callback
+     * @return $this
+     */
+    public function put(string $route, mixed $callback): static
+    {
+        $this->current_url = $route;
+        $this->current_method = 'put';
+        $this->routes['put'][$route] = $callback;
+        return $this;
+    }
+
+    public function patch(string $route, mixed $callback): static
+    {
+        $this->current_url = $route;
+        $this->current_method = 'patch';
+        $this->routes['patch'][$route] = $callback;
+        return $this;
+    }
+
+    /**
      * @throws NotFoundException
      */
     public function resolve()
