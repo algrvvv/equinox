@@ -60,6 +60,18 @@ npx tailwindcss -i ./public/assets/style.css -o ./public/dist/style.css --watch
 # ! подключать нужно созданные стили tailwind !
 ```
 
+## Маршрутизация
+
+Создание нового маршрута происходит в `public/index.php`. Пример подобного роута:
+
+```php
+#пример маршрута
+$app->route->get('/', [HomeController::class, 'index'];
+```
+
+Класс `Route` поддерживает `get`, `post`, `put`, `patch`, `delete` методы.
+
+
 ## Отображение
 
 Обязательно храните данные для отображения в папке `views/`, а так же
