@@ -1,5 +1,7 @@
-<img style="width: 400px; display: flex; margin: 0 auto" src="https://i.pinimg.com/originals/2c/d1/08/2cd108ddb22b2068aa00d3b4c864986d.png">
-<div style="display: flex; justify-content: center; align-items: center;">
+<p align="center">
+<img style="width: 400px; display: flex; margin: 0 auto; justify-content: center; align-items: center;" src="https://i.pinimg.com/originals/2c/d1/08/2cd108ddb22b2068aa00d3b4c864986d.png">
+</p>
+<p align="center">
     <a style="margin: 3px"> 
         <img src="https://img.shields.io/badge/Framework%20-6A4BE5" style="max-width: 100%;">
     </a>
@@ -9,7 +11,7 @@
     <a style="margin: 3px"> 
         <img src="https://img.shields.io/badge/PHP%20-8A2BE2" style="max-width: 100%;">
     </a>
-</div>
+</p>
 
 # Equinox - PHP Framework
 
@@ -140,7 +142,7 @@ $this->table->string('email')->unique();
 
 После создания и редактирования всех миграций, чтобы они
 были записаны в базу данных нужно вызвать 
-утилиту [[#master|master]].
+утилиту <a href="#master">master</a>.
 
 ```bash
 php master migrate
@@ -160,10 +162,9 @@ php master create:model name
 ```
 
 Для начала нужно изменить данные подключения в `.env`, как 
-было показано в [[#Установка|начале]].
+было показано в <a href="#Установка">самом начале</a>.
 
-После этого вам понадобиться модель, которая будет \
-иметь в себе нужные поля:
+После этого вам понадобиться модель, которая будет иметь в себе нужные поля:
 ```php
 #пример с моделью User
 public string $login = '';
