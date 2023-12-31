@@ -2,7 +2,9 @@
 
 namespace Imissher\Equinox\app\core\exceptions;
 
-class UndefinedMethod extends \Exception
+use Exception;
+
+class UndefinedMethod extends Exception
 {
     /**
      * Данное исключение необходимо для Master.php

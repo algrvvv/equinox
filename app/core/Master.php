@@ -2,6 +2,7 @@
 
 namespace Imissher\Equinox\app\core;
 
+use Exception;
 use Imissher\Equinox\app\core\exceptions\UndefinedMethod;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
@@ -25,15 +26,17 @@ class Master
                 try {
                     $command = explode(':', $config[1]);
                     if (isset($config[2])) {
+                        $options = null;
+                        if(isset($config[3])) $options = $config[3];
                         if(method_exists($this, $command[0])){
-                            $this->{$command[0]}($command[1], $config[2]);
+                            $this->{$command[0]}($command[1], $config[2], $options);
                         } else {
                             throw new UndefinedMethod();
                         }
                     } else {
                         $this->messageLog("Ошибка: Пропущен обязательный параметр");
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     echo $e->getMessage();
                 }
                 break;
@@ -53,7 +56,7 @@ class Master
     /**
      * @throws UndefinedMethod|exceptions\MigrationError
      */
-    private function drop(string $type, string $name)
+    private function drop(string $type, string $name, mixed $options): void
     {
         if($type === 'table'){
             Application::$app->db->downMigration($name);
@@ -62,8 +65,19 @@ class Master
         }
     }
 
-    private function create(string $type, string $name): void
+    private array $options = [
+        "-m"
+    ];
+    private function create(string $type, string $name, ?string $options): void
     {
+        if(!is_null($options)){
+            if(!in_array($options, $this->options)){
+                $this->messageLog("Ошибка! Недопустимый флаг");
+                exit;
+            }
+        }
+
+
         $filename = 'm' . date('His_ymd', time()) . "_" . $name;
         switch ($type) {
             case 'controller':
@@ -101,14 +115,22 @@ class $filename extends Migration
     }
 }";
                 file_put_contents(Application::$ROOT_PATH . "/app/database/migrations/$filename.php", "$text");
+
+                if($options === "-m") {
+                    $this->createModel($name);
+                    $this->messageLog(ucfirst($type) . " `$name` с моделью успешно созданы");
+                    break;
+                }
+                $this->messageLog(ucfirst($type) . " `$name` успешно создана");
+                break;
+            case 'model':
+                $this->createModel($name);
                 $this->messageLog(ucfirst($type) . " `$name` успешно создана");
                 break;
             default:
                 $this->messageLog("Невозможно создать $type");
                 break;
         }
-
-//
     }
 
     private function migrate(): void
@@ -127,6 +149,34 @@ class $filename extends Migration
         Пример использования:
         php master create:controller ProfileController // создание контроллера с названием ProfileController
         ";
+    }
+
+    private function createModel(string $name): void
+    {
+        $modelName = ucfirst($name);
+        $modeltext = "<?php
+
+namespace Imissher\Equinox\app\models;
+
+use Imissher\Equinox\app\core\database\DbModel;
+
+class $modelName extends DbModel
+{
+
+// TODO Add the required fields
+
+    protected function rules(): array
+    {
+        // TODO: Implement rules() method.
+    }
+
+    protected function tableName(): string
+    {
+        return '$name';
+    }
+}
+";
+        file_put_contents(Application::$ROOT_PATH . "/app/models/$modelName.php", "$modeltext");
     }
 
 }

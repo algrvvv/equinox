@@ -3,7 +3,6 @@
 namespace Imissher\Equinox\app\core;
 
 use Imissher\Equinox\app\core\Helpers\RouteTrait;
-use JetBrains\PhpStorm\NoReturn;
 
 class Controller
 {

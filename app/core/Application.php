@@ -2,9 +2,8 @@
 
 namespace Imissher\Equinox\app\core;
 
+use Exception;
 use Imissher\Equinox\app\core\database\Database;
-use Imissher\Equinox\app\core\exceptions\NotFoundException;
-use Imissher\Equinox\app\core\http\Kernel;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
 use Imissher\Equinox\app\core\http\Route;
@@ -48,7 +47,7 @@ class Application
     {
         try {
             echo $this->route->resolve();
-        } catch (\Exception $e){
+        } catch (Exception $e){
             if(gettype($e->getCode()) === 'string'){
                 $this->response->setResponseCode(500);
             } else {

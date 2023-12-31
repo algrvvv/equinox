@@ -2,7 +2,6 @@
 
 namespace Imissher\Equinox\app\core\http;
 
-use Imissher\Equinox\app\core\Application;
 
 class Request
 {

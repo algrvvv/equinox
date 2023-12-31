@@ -5,11 +5,12 @@ namespace Imissher\Equinox\app\core\database;
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\MigrationError;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
+use PDO;
 
 class Database
 {
     use MessageLogTrait;
-    public \PDO $pdo;
+    public PDO $pdo;
 
     public Migration $migrate;
 
@@ -19,8 +20,8 @@ class Database
         $dsn = $db_config['dsn'] ?? '';
         $user = $db_config['user'] ?? '';
         $password = $db_config['password'] ?? '';
-        $this->pdo = new \PDO($dsn, $user, $password);
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($dsn, $user, $password);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public function applyMigration(): void
@@ -114,7 +115,7 @@ class Database
     {
         $statement = $this->pdo->prepare("SELECT `migration` FROM `migrations`");
         $statement->execute();
-        return $statement->fetchAll(\PDO::FETCH_COLUMN);
+        return $statement->fetchAll(PDO::FETCH_COLUMN);
     }
 
     private function addNewMigration(array $migrations): bool

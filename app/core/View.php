@@ -5,8 +5,6 @@ namespace Imissher\Equinox\app\core;
 class View
 {
     private array $temps = [];
-
-    private string $layoutContent;
     private string $viewContent;
 
     /**
@@ -108,8 +106,7 @@ class View
     {
         ob_start();
         include_once Application::$ROOT_PATH . "/views/$layout.view.php";
-        $this->layoutContent = ob_get_clean();
-        return $this->layoutContent;
+        return ob_get_clean();
     }
 
 }

@@ -5,6 +5,7 @@ namespace Imissher\Equinox\app\core\database;
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\ReceivingData;
 use Imissher\Equinox\app\core\Model;
+use PDO;
 
 abstract class DbModel extends Model
 {
@@ -150,12 +151,12 @@ abstract class DbModel extends Model
         }
 
         $statement->execute();
-        $answer = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $answer = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         if(count($answer) === 1)
             return $answer[0];
 
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function toSql(): string
@@ -163,16 +164,4 @@ abstract class DbModel extends Model
         return $this->query;
     }
 
-    //TODO разобраться с этой функцией
-    private function getErrorFromSql(string $messageSql)
-    {
-        $sql = explode(' ', $messageSql);
-        $code = $sql[0];
-        $dublicateKey = $sql[count($sql) - 1] ?? false;
-
-        return match ($code) {
-            'SQLSTATE[23000]:' => "привет",
-            default => "Произошла ошибка во время работы с базой данных"
-        };
-    }
 }
