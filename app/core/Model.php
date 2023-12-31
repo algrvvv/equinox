@@ -32,16 +32,18 @@ abstract class Model
 
     abstract protected function rules(): array;
 
-    private array $errors;
+    private array $errors = [];
 
     /**
      * Валидация данных с правилами описанными в модели
      *
+     * @param array $rules
      * @return bool
      */
-    public function validate(): bool
+    public function validate(array $rules = []): bool
     {
-        foreach ($this->rules() as $key => $value) {
+        if(count($rules) === 0) $rules = $this->rules();
+        foreach ($rules as $key => $value) {
             foreach ($value as $rule) {
                 $variable_value = $this->{$key};
                 $ruleName = $rule;

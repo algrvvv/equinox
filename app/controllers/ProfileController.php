@@ -14,8 +14,10 @@ class ProfileController extends Controller
     public function profile(): false|array|string
     {
         $user = new User();
+        //получение данных пользователя из сессий
         $userData = $user->where(['id' => $this->session->get('user')])->get();
 
+        //рендер нужной страницы с передачей данных на эту страницу
         return $this->render('pages/profile', [
             "data" => [
                 "login" => $userData['login'],

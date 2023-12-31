@@ -1,6 +1,7 @@
 <?php
+
 namespace Imissher\Equinox\app\controllers;
-                
+
 use Imissher\Equinox\app\core\Controller;
 use Imissher\Equinox\app\core\exceptions\ReceivingData;
 use Imissher\Equinox\app\core\http\Request;
@@ -19,20 +20,33 @@ class LoginController extends Controller
      */
     public function login(Request $request): void
     {
-        if ($request->isPost()){
+        if ($request->isPost()) {
             $user = new User();
 
-            $userData = $request->getBody();
-            $data = $user->where(['email' => $userData['email']])->get();
-
-            if(!$data){
-                $this->redirect('/login')->with('error', 'Пользователя с такой почтой нет');
+            //получение данных с формы
+            $userData = $user->getData($request->getBody());
+            //правила для валидации данных
+            $rules = [
+                'email' => ['required', 'email'],
+                'password' => ['required']
+            ];
+            //редирект в случае несоблюдения правил
+            if (!$user->validate($rules)) {
+                $this->redirect('/login')->with('error', $user->getFirstError());
             }
 
-            if(!password_verify($userData['password'], $data['password'])){
+            //получение данных из бд
+            $data = $user->where(['email' => $userData['email']])->get();
+            //проверка на наличие такого пользователя
+            if (!$data) {
+                $this->redirect('/login')->with('error', 'Пользователя с такой почтой нет');
+            }
+            //проверка пароля
+            if (!password_verify($userData['password'], $data['password'])) {
                 $this->redirect('/login')->with('error', 'Неправильный пароль');
             }
 
+            //запись в сессию и редирект на главную
             $this->session->set('user', $data['id']);
             $this->redirect('/')->with('success', 'Добро пожаловать');
         } else {
@@ -42,12 +56,11 @@ class LoginController extends Controller
 
     #[NoReturn] public function logout(): void
     {
-        echo "вы вышли из аккаунта";
         $uid = $this->session->get('user');
 
-        if(!$uid) $this->redirect('/')->with('error', 'У вас нет доступа к этой странице');
+        if (!$uid) $this->redirect('/')->with('error', 'У вас нет доступа к этой странице');
 
-        
+
         $this->session->remove('user');
         $this->redirect('/')->with('success', 'Вы успешно вышли из своего аккаунта');
     }

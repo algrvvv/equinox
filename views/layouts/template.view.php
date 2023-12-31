@@ -74,7 +74,7 @@ use Imissher\Equinox\app\core\Application;
     </nav>
 
     <?php if (Application::$app->session->getFlash('success')) : ?>
-        <div class="w-1/2 fixed bottom-20 right-10" role="alert">
+        <div class="w-1/6 fixed bottom-20 right-10" role="alert">
             <div class="border border-green-200 rounded bg-green-100 px-4 py-3 text-green-700">
                 <p><?php echo Application::$app->session->getFlash('success') ?></p>
             </div>
@@ -82,7 +82,7 @@ use Imissher\Equinox\app\core\Application;
     <?php endif; ?>
 
     <?php if (Application::$app->session->getFlash('error')) : ?>
-        <div class="w-1/2 fixed bottom-20 right-10" role="alert">
+        <div class="w-1/6 fixed bottom-20 right-10" role="alert">
             <div class="bg-red-400 text-white font-bold rounded-t px-4 py-2">
                 Ошибка
             </div>
@@ -90,7 +90,6 @@ use Imissher\Equinox\app\core\Application;
                 <p><?php echo Application::$app->session->getFlash('error') ?></p>
             </div>
         </div>
-
     <?php endif; ?>
 
 

@@ -18,16 +18,20 @@ class RegisterController extends Controller
         if ($request->method() == 'post') {
             $user = new User();
 
+            //получение данных с формы
             $userData = $user->getData($request->getBody());
+            //валидация по правилам, которые прописаны в модели
             if ($user->validate()) {
+                //если все правильно, то формируем массив с данными, которые будем записывать в бд
                 $attrs = [
                     'login' => $userData['login'],
                     'email' => $userData['email'],
                     'password' => password_hash($userData['password'], PASSWORD_BCRYPT),
                 ];
 
+                //если данные добавляются успешно -> редирект на страницу входа
                 if($user->insert($attrs)){
-                    $this->redirect('/')->with('success', 'Пользователь зарегистрирован');
+                    $this->redirect('/login')->with('success', 'Пользователь зарегистрирован');
                 }
 
             } else {

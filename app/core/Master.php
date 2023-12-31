@@ -14,11 +14,12 @@ class Master
 
     public function __construct(array $config)
     {
+        //TODO create:model / create:migration -m
         if (count($config) == 1 || $config[0] === false) return;
 
         $this->app = Application::$app;
         foreach ($config as $item) {
-            if ($item == 'master.php') continue;
+            if ($item == 'master') continue;
 
             if (str_contains($item, ':')) {
                 try {
@@ -41,7 +42,7 @@ class Master
             } elseif ($item === 'migrate') {
                 $this->migrate();
             } else {
-                $this->messageLog("Используйте команду `php master.php --help` для того, чтобы узнать больше");
+                $this->messageLog("Используйте команду `php master --help` для того, чтобы узнать больше");
             }
 
 
@@ -117,14 +118,14 @@ class $filename extends Migration
 
     private function helpMessage(): void
     {
-        echo "Небольшой мануал по использованию `master.php`:\n
+        echo "Небольшой мануал по использованию `master`:\n
         `migrate` - для переноса всех таблиц бд\n
         `create:controller nameController` - для создания контроллера\n
         `create:migration nameMigration` - для создания миграции\n
         `drop:table nameTable` - для удаление миграции\n
         
         Пример использования:
-        php master.php create:controller ProfileController // создание контроллера с названием ProfileController
+        php master create:controller ProfileController // создание контроллера с названием ProfileController
         ";
     }
 
