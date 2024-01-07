@@ -14,7 +14,7 @@ class Schema
     private array $variables = [];
 
     /**
-     * Создание миграции
+     * Создание миграции для (SQL)
      *
      * @param string $db_name
      * @param $callback
@@ -23,7 +23,7 @@ class Schema
     public function create(string $db_name, $callback): bool|string
     {
         $this->messageLog("Начало переноса `$db_name`");
-        $this->query = "CREATE TABLE `$db_name`";
+        $this->query = "CREATE TABLE $db_name";
         call_user_func($callback);
         if (!empty($this->variables)) {
             try {
@@ -40,27 +40,32 @@ class Schema
         }
     }
 
+    /**
+     * Подготовка запрос для (SQL)
+     *
+     * @return false|int
+     */
     private function query_exec(): false|int
     {
         $structure = "";
         foreach ($this->variables as $key => $value) {
-            $structure .= "`$key` $value, ";
+            $structure .= "$key $value, ";
         }
-        $query = $this->query . " ( " . trim($structure, ', ') . ") ENGINE=INNODB";
+        $query = $this->query . " ( " . trim($structure, ', ') . ")";
         $this->query = $query;
         $db = Application::$app->db;
         return $db->pdo->exec($this->query);
     }
 
     /**
-     * Удаление таблицы
+     * Удаление таблицы для (SQL)
      *
      * @param string $table
      * @return false|int
      */
     public function dropTable(string $table): false|int
     {
-        $this->query = "DROP TABLE `$table`";
+        $this->query = "DROP TABLE $table";
         $db = Application::$app->db;
         return $db->pdo->exec($this->query);
     }
@@ -76,7 +81,7 @@ class Schema
     }
 
     /**
-     * Создание переменной `id`
+     * Создание переменной `id` (SQL)
      *
      * @param string $id
      * @return $this
@@ -87,8 +92,14 @@ class Schema
         return $this;
     }
 
+    public function bigserial(string $id = 'id'): static
+    {
+        $this->setVariables($id, "BIGSERIAL PRIMARY KEY NOT NULL");
+        return $this;
+    }
+
     /**
-     * Создание переменной типа `string`
+     * Создание переменной типа `string` (SQL)
      *
      * @param string $string Название колонки
      * @param int $length Максимальная допустимая длина
@@ -102,8 +113,20 @@ class Schema
         return $this;
     }
 
+    public function date(string $date, bool $not_null = true): static
+    {
+        $not_null = $not_null ? 'NOT NULL' : '';
+        $this->setVariables($date, "DATE $not_null");
+        return $this;
+    }
+
+    public function text()
+    {
+        //TODO сделать тип text
+    }
+
     /**
-     * Создание переменной типа `timestamp`
+     * Создание переменной типа `timestamp` (SQL)
      *
      * @param string $timestamp Название колонки. По дефолту - `created_at`
      * @param bool $default Назначение дефолтного значения
@@ -117,7 +140,7 @@ class Schema
     }
 
     /**
-     * Делает последнюю созданную переменную уникальной
+     * Делает последнюю созданную переменную уникальной (SQL)
      *
      * @return void
      */

@@ -71,7 +71,7 @@ abstract class Model
                 if($ruleName === self::RULE_UNIQUE){
                     $tableName = $this->tableName();
                     $db = Application::$app->db->pdo;
-                    $statement = $db->prepare("SELECT COUNT(*) as 'count' FROM `$tableName` WHERE `$key` = '$variable_value'");
+                    $statement = $db->prepare("SELECT COUNT(*) as count FROM $tableName WHERE $key = '$variable_value'");
                     $statement->execute();
                     $count = $statement->fetch()['count'];
 

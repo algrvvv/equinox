@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  nginx:
+    container_name: equinox_nginx
+    image: nginx:latest
+    volumes:
+      - ./:/var/www/
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - "8876:80"
+    depends_on:
+      - app
+
+  app:
+    container_name: equinox_app
+    build:
+      context: .
+      dockerfile: ./_docker/app/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: equinox_mysql
+    image: mysql:latest
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: db_equinox
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8101:3306"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+
+  pgsql:
+    container_name: equinox_pgsql
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: db_equinox
+      PGDATA: /var/lib/postgresql/data/equinox/
+    volumes:
+      - pgsql:/var/lib/postgresql/data/equinox
+
+volumes:
+  mysql:
+  pgsql:
+
