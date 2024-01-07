@@ -69,7 +69,7 @@ class Application
 
     public static function style(string $path): void
     {
-        $link = $_SERVER['HTTP_X_FORWARDED_PROTO'] . "://" . $_SERVER['HTTP_HOST'];
+        $link = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'];
         echo "<link rel='stylesheet' href='" . $link ."/$path'>";
     }
 

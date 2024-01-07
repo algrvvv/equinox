@@ -2,7 +2,9 @@
 
 namespace Imissher\Equinox\app\core\database;
 
+use Exception;
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\exceptions\ConnectionError;
 use Imissher\Equinox\app\core\exceptions\MigrationError;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use PDO;
@@ -14,14 +16,21 @@ class Database
 
     public Migration $migrate;
 
+    /**
+     * @throws ConnectionError
+     */
     public function __construct(array $db_config)
     {
         $this->migrate = new Migration();
         $dsn = $db_config['dsn'] ?? '';
         $user = $db_config['user'] ?? '';
         $password = $db_config['password'] ?? '';
-        $this->pdo = new PDO($dsn, $user, $password);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $this->pdo = new PDO($dsn, $user, $password);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (Exception $e){
+            throw new ConnectionError();
+        }
     }
 
     public function applyMigration(): void
