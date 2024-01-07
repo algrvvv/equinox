@@ -5,7 +5,7 @@ require_once __DIR__ . "/../vendor/autoload.php";
 /**
  * Проверка на совместимость версий php
  */
-if((float)phpversion() < 8.1) {
+if ((float)phpversion() < 8.1) {
     echo "Require a PHP version >= 8.1.0 You are running " . phpversion();
     exit;
 }
@@ -19,14 +19,15 @@ $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
 
 /**
-|--------------------------------------------------------------------------
-| $config => Массив полученных данных из `.env` файла, которые нужны
-| для конфигурации приложения.
-|--------------------------------------------------------------------------
-*/
+ * |--------------------------------------------------------------------------
+ * | $config => Массив полученных данных из `.env` файла, которые нужны
+ * | для конфигурации приложения.
+ * |--------------------------------------------------------------------------
+ */
 $config = [
     'db' => [
-        'dsn'  => $_ENV['DB_DRIVER'].":host=".$_ENV['DB_HOST'].";post=".$_ENV['DB_PORT'].";dbname=".$_ENV['DB_NAME'],
+        'driver' => $_ENV['DB_DRIVER'],
+        'dsn' => "host=" . $_ENV['DB_HOST'] . ";port=" . $_ENV['DB_PORT'] . ";dbname=" . $_ENV['DB_NAME'],
         'user' => $_ENV['DB_USERNAME'],
         'password' => $_ENV['DB_PASSWORD']
     ],

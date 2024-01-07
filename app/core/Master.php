@@ -19,6 +19,7 @@ class Master
         if (count($config) == 1 || $config[0] === false) return;
 
         $this->app = Application::$app;
+        $version = $this->app::$APP_VERSION;
         foreach ($config as $item) {
             if ($item == 'master') continue;
 
@@ -42,6 +43,8 @@ class Master
                 break;
             } elseif ($item === '-h' || $item === '--help') {
                 $this->helpMessage();
+            } elseif ($item === '-v' || $item === '--version'){
+                $this->messageLog("App Version: $version");
             } elseif ($item === 'migrate') {
                 $this->migrate();
             } else {
