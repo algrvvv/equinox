@@ -1,4 +1,4 @@
-<?php /** @var $data */?>
+<?php /** @var $data */ ?>
 
 <div class="sm:flex sm:justify-center sm:items-center">
     <div class="max-w-7xl mx-auto p-6 lg:p-8">
@@ -10,8 +10,10 @@
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Логин пользователя: <span
                                     class="underline"><?= $data['login'] ?></span></h2>
                     </div>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"> Электронная почта пользователя: <span class="underline"><?= $data['email'] ?></span></p>
+                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"> Электронная почта пользователя: <span
+                                class="underline"><?= $data['email'] ?></span></p>
                 </span>
             </div>
         </div>
     </div>
+</div>
