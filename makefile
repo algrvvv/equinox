@@ -1,5 +1,5 @@
 php:
-	docker exec -it equinox_app bash
+	docker-compose exec nginx nginx -s reload
 
 pgsql:
 	docker exec -it equinox_pgsql psql -U postgres
@@ -9,3 +9,6 @@ mysql:
 
 migrate:
 	docker exec -it equinox_app php master migrate
+
+nginx_reload:
+	docker exec equinox_nginx nginx -s reload

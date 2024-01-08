@@ -2,13 +2,17 @@
 
 namespace Imissher\Equinox\app\core\http;
 
+use Imissher\Equinox\app\core\exceptions\ControllerError;
 use Imissher\Equinox\app\core\exceptions\NotFoundException;
+use Imissher\Equinox\app\core\Helpers\DynamicUrlTrait;
 use Imissher\Equinox\app\core\Session;
 use Imissher\Equinox\app\core\View;
 
 
 class Route
 {
+    use DynamicUrlTrait;
+
     /**
      * @var string|array|null
      */
@@ -21,6 +25,8 @@ class Route
      * @var array
      */
     protected array $routes = [];
+
+    protected array $variables = [];
 
     /**
      * @var Request
@@ -68,9 +74,11 @@ class Route
      */
     public function get(string $route, mixed $callback): static
     {
-        $this->current_url = $route;
+        $router = $this->method_helper($route);
+
+        $this->current_url = $router;
         $this->current_method = 'get';
-        $this->routes['get'][$route] = $callback;
+        $this->routes['get'][$router] = $callback;
         return $this;
     }
 
@@ -83,9 +91,11 @@ class Route
      */
     public function post(string $route, mixed $callback): static
     {
-        $this->current_url = $route;
+        $router = $this->method_helper($route);
+
+        $this->current_url = $router;
         $this->current_method = 'post';
-        $this->routes['post'][$route] = $callback;
+        $this->routes['post'][$router] = $callback;
         return $this;
     }
 
@@ -98,9 +108,11 @@ class Route
      */
     public function delete(string $route, mixed $callback): static
     {
-        $this->current_url = $route;
+        $router = $this->method_helper($route);
+
+        $this->current_url = $router;
         $this->current_method = 'delete';
-        $this->routes['delete'][$route] = $callback;
+        $this->routes['delete'][$router] = $callback;
         return $this;
     }
 
@@ -113,22 +125,38 @@ class Route
      */
     public function put(string $route, mixed $callback): static
     {
-        $this->current_url = $route;
+        $router = $this->method_helper($route);
+
+        $this->current_url = $router;
         $this->current_method = 'put';
-        $this->routes['put'][$route] = $callback;
+        $this->routes['put'][$router] = $callback;
         return $this;
     }
 
     public function patch(string $route, mixed $callback): static
     {
-        $this->current_url = $route;
+        $router = $this->method_helper($route);
+
+        $this->current_url = $router;
         $this->current_method = 'patch';
-        $this->routes['patch'][$route] = $callback;
+        $this->routes['patch'][$router] = $callback;
         return $this;
+    }
+
+    private function method_helper(string $route): string
+    {
+        $route_parts = $this->get_url($route);
+        $router = $route_parts['url'];
+        if (!is_null($route_parts['variables'])) {
+            $this->variables[$router] = $route_parts['variables'];
+        }
+
+        return $router;
     }
 
     /**
      * @throws NotFoundException
+     * @throws ControllerError
      */
     public function resolve()
     {
@@ -143,17 +171,28 @@ class Route
         }
 
         if (is_string($callback)) {
-            /**
-             * |--------------------------------------------------------------------------
-             * | Рендер нужного шаблона, если указывается шаблон,
-             * | а не колл бек или контроллер
-             * |--------------------------------------------------------------------------
-             */
             return $this->render($callback);
         }
 
         if (is_array($callback)) {
             $callback[0] = new $callback[0]();
+        }
+
+        if (isset($this->variables[$url])) {
+            $args = [];
+            $input_args = $callback[0]->getArgs()[$callback[1]];
+            foreach ($input_args as $input_arg) {
+                if ($input_arg === 'request') {
+                    $args['request'] = $this->request;
+                } elseif ($input_arg === 'req') {
+                    $args['req'] = $this->request;
+                }
+            }
+            foreach ($this->variables[$url] as $variable => $value) {
+                $args[$variable] = $value;
+            }
+
+            return call_user_func_array($callback, $args);
         }
 
         return call_user_func($callback, $this->request);
