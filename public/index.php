@@ -13,6 +13,7 @@ if ((float)phpversion() < 8.1) {
 use Imissher\Equinox\app\controllers\LoginController;
 use Imissher\Equinox\app\controllers\RegisterController;
 use Imissher\Equinox\app\controllers\ProfileController;
+use Imissher\Equinox\app\controllers\TestController;
 use Imissher\Equinox\app\core\Application;
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
@@ -58,6 +59,8 @@ $app->route->get('/login', [LoginController::class, 'index'])->middleware('guest
 $app->route->post('/login', [LoginController::class, 'login'])->middleware('guest');
 
 $app->route->post('/logout', [LoginController::class, 'logout']);
+
+$app->route->get('/test/{id}/{name}', [TestController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------

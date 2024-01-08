@@ -4,7 +4,6 @@ namespace Imissher\Equinox\app\core;
 
 use Exception;
 use Imissher\Equinox\app\core\database\Database;
-use Imissher\Equinox\app\core\exceptions\ConnectionError;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
@@ -24,9 +23,7 @@ class Application
     public Session $session;
     public static Application $app;
 
-    /**
-     * @throws ConnectionError|Exception
-     */
+
     public function __construct(string $rootPath, array $config)
     {
         try {
@@ -52,7 +49,6 @@ class Application
      * Запускает приложение
      *
      * @return void
-     * @throws Exception
      */
     public function run(): void
     {
@@ -64,9 +60,6 @@ class Application
 
     }
 
-    /**
-     * @throws Exception
-     */
     public function error_handler(Exception $e, bool $master = false): void
     {
         if (!$master) {
