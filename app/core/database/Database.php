@@ -17,6 +17,7 @@ class Database
     public Migration $migrate;
 
     public string $db_driver = 'mysql';
+    public string $db_name;
 
     private array $support_drivers = [
         "mysql", "pgsql"
@@ -33,6 +34,8 @@ class Database
         $this->migrate = new Migration();
         $this->db_driver = $driver;
         $dsn = $db_config['driver'] . ":" . $db_config['dsn'];
+        $this->db_name = str_replace('dbname=', '', explode(';', $dsn)[2]);
+
         $user = $db_config['user'] ?? '';
         $password = $db_config['password'] ?? '';
         try {
@@ -93,6 +96,36 @@ class Database
             throw new MigrationError();
         }
 
+    }
+
+    /**
+     * Удаление всех таблиц
+     *
+     * @throws MigrationError
+     */
+    public function downMigrations(): void
+    {
+        $driver = $this->db_driver;
+        if($driver === "pgsql"){
+            $schema = "SELECT CURRENT_SCHEMA;";
+            $statement = $this->pdo->prepare($schema);
+            $statement->execute();
+            $res = $statement->fetchAll(PDO::FETCH_COLUMN)[0];
+            try {
+                $this->pdo->exec("drop schema $res cascade;");
+                $this->pdo->exec("create schema $res;");
+            } catch (Exception $e){
+                throw new MigrationError();
+            }
+        } elseif ($driver === "mysql"){
+            $dbname = $this->db_name;
+            try {
+                $this->pdo->exec("drop database $dbname;");
+                $this->pdo->exec("create database $dbname;");
+            } catch (Exception $e){
+                throw new MigrationError();
+            }
+        }
     }
 
     private function findTable(string $table)

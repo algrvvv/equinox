@@ -73,11 +73,13 @@ class Schema
     /**
      * @param string $name
      * @param string $structure
+     * @param bool $not_null
      * @return void
      */
-    private function setVariables(string $name, string $structure): void
+    private function setVariables(string $name, string $structure, bool $not_null = true): void
     {
-        $this->variables[$name] = $structure;
+        $not_null = $not_null ? 'NOT NULL' : '';
+        $this->variables[$name] = $structure . " $not_null";
     }
 
     /**
@@ -108,15 +110,13 @@ class Schema
      */
     public function string(string $string, int $length = 255, bool $not_null = true): static
     {
-        $not_null = $not_null ? 'NOT NULL' : '';
-        $this->setVariables($string, "VARCHAR($length) $not_null");
+        $this->setVariables($string, "VARCHAR($length)", $not_null);
         return $this;
     }
 
     public function date(string $date, bool $not_null = true): static
     {
-        $not_null = $not_null ? 'NOT NULL' : '';
-        $this->setVariables($date, "DATE $not_null");
+        $this->setVariables($date, "DATE", $not_null);
         return $this;
     }
 
@@ -148,6 +148,28 @@ class Schema
     {
         $variable = array_key_last($this->variables);
         $this->variables[$variable] .= " UNIQUE";
+    }
+
+    /**
+     * Тип данных JSONB (pgsql)
+     *
+     * @param string $jsonb
+     * @param bool $not_null
+     * @return $this
+     */
+    public function jsonb(string $jsonb, bool $not_null = true): static
+    {
+        $this->setVariables($jsonb, "JSONB", $not_null);
+        return $this;
+    }
+
+    public function hstore(string $hstore, bool $not_null = true): static
+    {
+        $db = Application::$app->db;
+        $db->pdo->exec("CREATE EXTENSION hstore;");
+        $this->setVariables($hstore, "hstore", $not_null);
+
+        return $this;
     }
 
 }

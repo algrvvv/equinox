@@ -63,7 +63,11 @@ class Master
     {
         if($type === 'table'){
             Application::$app->db->downMigration($name);
-        } else {
+        } elseif ($type === 'tables') {
+            if($name != "true") return;
+            Application::$app->db->downMigrations();
+        }
+        else {
             throw new UndefinedMethod();
         }
     }
