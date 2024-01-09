@@ -1,5 +1,5 @@
 php:
-	docker-compose exec nginx nginx -s reload
+	docker exec -it equinox_app bash
 
 pgsql:
 	docker exec -it equinox_pgsql psql -U postgres
