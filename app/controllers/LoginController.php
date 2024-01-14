@@ -12,7 +12,7 @@ class LoginController extends Controller
 {
     public function index(): false|array|string
     {
-        return $this->render('pages/login');
+        return render('pages/login');
     }
 
     /**

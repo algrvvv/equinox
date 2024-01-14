@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../vendor/autoload.php";
+require_once __DIR__ . "/../app/core/Helpers/helpers.php";
 
 /**
  * Проверка на совместимость версий php

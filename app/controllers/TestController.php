@@ -10,7 +10,7 @@ class TestController extends Controller
 {
     public function index(mixed $id, string $name): false|array|string
     {
-        return $this->render('pages/test', [
+        return render('pages/test', [
             "id" => $id, "name" => $name
         ]);
     }
