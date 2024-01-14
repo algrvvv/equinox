@@ -12,6 +12,7 @@ class Schema
 
     private string $query;
     private array $variables = [];
+    private bool $hstore_status = false;
 
     /**
      * Создание миграции для (SQL)
@@ -165,8 +166,11 @@ class Schema
 
     public function hstore(string $hstore, bool $not_null = true): static
     {
-        $db = Application::$app->db;
-        $db->pdo->exec("CREATE EXTENSION hstore;");
+        if(!$this->hstore_status) {
+            $db = Application::$app->db;
+            $db->pdo->exec("CREATE EXTENSION hstore;");
+            $this->hstore_status = true;
+        }
         $this->setVariables($hstore, "hstore", $not_null);
 
         return $this;

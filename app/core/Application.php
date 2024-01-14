@@ -13,7 +13,7 @@ class Application
 {
     use MessageLogTrait;
     public static string $ROOT_PATH;
-    public static string $APP_VERSION;
+    private static string $APP_VERSION;
     public Route $route;
     public Response $response;
     public Request $request;

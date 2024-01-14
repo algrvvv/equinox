@@ -12,6 +12,7 @@ use PDO;
 class Database
 {
     use MessageLogTrait;
+
     public PDO $pdo;
 
     public Migration $migrate;
@@ -29,7 +30,7 @@ class Database
     public function __construct(array $db_config)
     {
         $driver = $db_config['driver'];
-        if(!in_array($driver, $this->support_drivers)) throw new ConnectionError();
+        if (!in_array($driver, $this->support_drivers)) throw new ConnectionError();
 
         $this->migrate = new Migration();
         $this->db_driver = $driver;
@@ -106,7 +107,7 @@ class Database
     public function downMigrations(): void
     {
         $driver = $this->db_driver;
-        if($driver === "pgsql"){
+        if ($driver === "pgsql") {
             $schema = "SELECT CURRENT_SCHEMA;";
             $statement = $this->pdo->prepare($schema);
             $statement->execute();
@@ -114,15 +115,14 @@ class Database
             try {
                 $this->pdo->exec("drop schema $res cascade;");
                 $this->pdo->exec("create schema $res;");
-            } catch (Exception $e){
+            } catch (Exception $e) {
                 throw new MigrationError();
             }
-        } elseif ($driver === "mysql"){
+        } elseif ($driver === "mysql") {
             $dbname = $this->db_name;
             try {
-                $this->pdo->exec("drop database $dbname;");
-                $this->pdo->exec("create database $dbname;");
-            } catch (Exception $e){
+                $this->pdo->exec("TRUNCATE TABLE $dbname;");
+            } catch (Exception $e) {
                 throw new MigrationError();
             }
         }

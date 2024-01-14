@@ -19,7 +19,8 @@ class Master
         if (count($config) == 1 || $config[0] === false) return;
 
         $this->app = Application::$app;
-        $version = $this->app::$APP_VERSION;
+        $app_version = $this->app::app_version();
+        $php_version = phpversion();
         foreach ($config as $item) {
             if ($item == 'master') continue;
 
@@ -44,7 +45,8 @@ class Master
             } elseif ($item === '-h' || $item === '--help') {
                 $this->helpMessage();
             } elseif ($item === '-v' || $item === '--version'){
-                $this->messageLog("App Version: $version");
+                $this->messageLog("PHP Version: \033[0;32m$php_version\033[0m");
+                $this->messageLog("App Version: \033[0;32m$app_version\033[0m");
             } elseif ($item === 'migrate') {
                 $this->migrate();
             } else {
@@ -148,14 +150,17 @@ class $filename extends Migration
     private function helpMessage(): void
     {
         echo "Небольшой мануал по использованию `master`:\n
-        `migrate` - для переноса всех таблиц бд\n
-        `create:controller nameController` - для создания контроллера\n
-        `create:migration nameMigration` - для создания миграции\n
-        `drop:table nameTable` - для удаление миграции\n
-        
-        Пример использования:
-        php master create:controller ProfileController // создание контроллера с названием ProfileController
-        ";
+\033[0;32m migrate \033[0m - для переноса всех таблиц бд\n
+\033[0;32m create:controller nameController \033[0m - для создания контроллера\n
+\033[0;32m create:migration nameMigration \033[0m - для создания миграции\n
+\033[0;32m create:migration nameMigration -m \033[0m - для создания миграции вместе с моделью\n
+\033[0;32m create:model nameModel \033[0m - для создания модели\n
+\033[0;32m drop:table nameTable \033[0m - для удаление миграции\n
+\033[0;32m drop:tables true \033[0m - для удаление всех миграций\n
+
+\033[0;31m Пример использования \033[0m:
+ php master create:controller ProfileController // создание контроллера с названием ProfileController
+";
     }
 
     private function createModel(string $name): void

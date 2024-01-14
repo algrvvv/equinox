@@ -163,8 +163,8 @@ php master create:migration name
 > ОЧЕНЬ ВАЖНО!
 
 Важно отметить, что на данный момент они поддерживают
-работу только с MySQL, но в следующих обновлениях планируется
-добавить поддержку PostgreSQL, MongoDB, MariaDB и др.
+работу с MySQL и PostgreSQL, но в следующих обновлениях планируется
+добавить поддержку MongoDB, MariaDB и др.
 
 > Название миграций генерирует в начале дополнительные
 > символы и цифры, чтобы избежать возможных конфликтов.
@@ -173,12 +173,21 @@ php master create:migration name
 В миграции `users` уже есть пример того, какие поля и какие
 возможности есть у миграций.
 
-```php
-#пример создания поля типа string с названием login
-$this->table->string('login');
+Типы данных, которые доступны при работе с миграциями:
 
-#пример создания такого же поля, но уникального
-$this->table->string('email')->unique();
+```php
+# MySQL, PostgreSQL
+$this->table->string('field')->unique();
+$this->table->date('field');
+$this->table->timestamps();
+
+# MySQL
+$this->table->id();
+
+# PostgreSQL
+$this->table->bigserial();
+$this->table->hstore('field');
+$this->table->jsonb('field');
 ```
 
 После создания и редактирования всех миграций, чтобы они
