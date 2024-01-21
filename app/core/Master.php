@@ -44,6 +44,9 @@ class Master
                 break;
             } elseif ($item === '-h' || $item === '--help') {
                 $this->helpMessage();
+            } elseif ($item === "serve") {
+                $this->messageLog("\033[0;32mЗапуск сервера. Не забудьте подключить базу данных!\033[0m");
+                $cd = shell_exec("cd public && php -S localhost:8080");
             } elseif ($item === '-v' || $item === '--version'){
                 $this->messageLog("PHP Version: \033[0;32m$php_version\033[0m");
                 $this->messageLog("App Version: \033[0;32m$app_version\033[0m");

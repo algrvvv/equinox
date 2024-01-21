@@ -21,7 +21,7 @@ class Database
     public string $db_name;
 
     private array $support_drivers = [
-        "mysql", "pgsql"
+        "mysql", "pgsql", "sqlite"
     ];
 
     /**
@@ -37,12 +37,19 @@ class Database
         $dsn = $db_config['driver'] . ":" . $db_config['dsn'];
         $this->db_name = str_replace('dbname=', '', explode(';', $dsn)[2]);
 
-        $user = $db_config['user'] ?? '';
-        $password = $db_config['password'] ?? '';
+        $user = $db_config['user'] ?? null;
+        $password = $db_config['password'] ?? null;
+
         try {
-            $this->pdo = new PDO($dsn, $user, $password);
+            if ($this->db_driver === 'sqlite') {
+                $pathToSqlite = str_replace("\\", "/", Application::$ROOT_PATH) . "/app/database/database.sqlite";
+                $this->findOrCreateSqliteTable($pathToSqlite);
+                $this->pdo = new PDO("sqlite:" . $pathToSqlite);
+            } else {
+                $this->pdo = new PDO($dsn, $user, $password);
+            }
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw new ConnectionError();
         }
     }
@@ -119,12 +126,22 @@ class Database
                 throw new MigrationError();
             }
         } elseif ($driver === "mysql") {
-            $dbname = $this->db_name;
             try {
-                $this->pdo->exec("TRUNCATE TABLE $dbname;");
+                $this->pdo->exec("drop database YOUR_DATABASE;");
+                $this->pdo->exec("create database YOUR_DATABASE;");
             } catch (Exception $e) {
                 throw new MigrationError();
             }
+        } elseif ($driver === "sqlite") {
+            //TODO добавить удаление всех таблиц в sqlite
+            $this->messageLog("Скоро будет доступно для Sqlite");
+//            try {
+//                $stmt = $this->pdo->prepare('DELETE FROM sqlite_master WHERE type=\'table\'');
+//                $stmt->execute();
+//                echo "Deleted all tables\n";
+//            } catch (Exception $e) {
+//                throw new MigrationError();
+//            }
         }
     }
 
@@ -172,6 +189,16 @@ class Database
                 $statement = $this->pdo->prepare("INSERT INTO migrations (migration, dbname) VALUES ('$migration', '$db')");
                 return $statement->execute();
             }
+        }
+
+        return true;
+    }
+
+    private function findOrCreateSqliteTable(string $path): true
+    {
+        if (!file_exists($path)) {
+            $fp = fopen($path, 'w');
+            fclose($fp);
         }
 
         return true;

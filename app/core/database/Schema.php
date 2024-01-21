@@ -91,6 +91,12 @@ class Schema
      */
     public function id(string $id = 'id'): static
     {
+        //TODO id for sqlite
+//        $conf = require_once "./app/core/config/database.php";
+//        $driver = Application::$app->db->db_driver;
+//        $migration_table = $conf['connections'][$driver]['migration_table'];
+//        print_r($migration_table);
+//        exit;
         $this->setVariables($id, "INT AUTO_INCREMENT PRIMARY KEY");
         return $this;
     }
