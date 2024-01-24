@@ -6,7 +6,7 @@
         <img src="https://img.shields.io/badge/Framework%20-6A4BE5" style="max-width: 100%;">
     </a>
     <a style="margin: 3px">
-        <img src="https://img.shields.io/badge/Equinox-v1.2.1-blue" style="max-width: 100%;">
+        <img src="https://img.shields.io/badge/Equinox-v1.3.1-blue" style="max-width: 100%;">
     </a>
     <a style="margin: 3px"> 
         <img src="https://img.shields.io/badge/PHP%20-8A2BE2" style="max-width: 100%;">
@@ -65,7 +65,7 @@ npm install
 Скопируйте и переименуйте файл `.env.example` в `.env`.
 После этого измените данные для подключения в нем на свои:
 
-```.dotenv
+```dotenv
 DB_DRIVER=db_driver
 DB_HOST=db_host
 DB_PORT=db_port
@@ -73,6 +73,13 @@ DB_NAME=db_name
 DB_USERNAME=db_user
 DB_PASSWORD=db_password
 ```
+
+Для подключения `sqlite` используйте одну строчку: 
+
+```dotenv
+DB_DRIVER=sqlite
+```
+
 После подключения базы данных напишите в терминале в корне проекта:
 
 ```bash
