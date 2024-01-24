@@ -10,10 +10,10 @@ $dotenv->load();
 
 $config = [
     'db' => [
-        'driver' => $_ENV['DB_DRIVER'],
-        'dsn' => "host=" . $_ENV['DB_HOST'] . ";port=" . $_ENV['DB_PORT'] . ";dbname=" . $_ENV['DB_NAME'],
-        'user' => $_ENV['DB_USERNAME'],
-        'password' => $_ENV['DB_PASSWORD']
+        'driver' => $_ENV['DB_DRIVER'] ?? '',
+        'dsn' => "host=" . ($_ENV['DB_HOST'] ?? '') . ";port=" .($_ENV['DB_PORT'] ?? '') . ";dbname=" . ($_ENV['DB_NAME'] ?? ''),
+        'user' => ($_ENV['DB_USERNAME'] ?? ''),
+        'password' => ($_ENV['DB_PASSWORD'] ?? '')
     ],
     'master' => $argv,
     'display_error' => $_ENV['DISPLAY_ERROR'],
