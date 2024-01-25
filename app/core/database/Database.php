@@ -102,7 +102,7 @@ class Database
             $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migration", PATHINFO_FILENAME);
             $instance = new $className();
             if ($instance->drop() !== false) {
-                $this->messageLog("Удаление завершено");
+                $this->messageLog("\033[0;32mУдаление завершено\033[0m");
             }
 
         } else {
@@ -127,26 +127,33 @@ class Database
             try {
                 $this->pdo->exec("drop schema $res cascade;");
                 $this->pdo->exec("create schema $res;");
+
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
             } catch (Exception $e) {
                 throw new MigrationError();
             }
         } elseif ($driver === "mysql") {
             try {
-                $this->pdo->exec("drop database YOUR_DATABASE;");
-                $this->pdo->exec("create database YOUR_DATABASE;");
+                $this->pdo->exec("drop database {$this->db_name};");
+                $this->pdo->exec("create database {$this->db_name};");
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
             } catch (Exception $e) {
-                throw new MigrationError();
+                throw new MigrationError("Ошибка при удалении всей базы данных\n" . $e->getMessage());
             }
         } elseif ($driver === "sqlite") {
-            //TODO добавить удаление всех таблиц в sqlite
-            $this->messageLog("Скоро будет доступно для Sqlite");
-//            try {
-//                $stmt = $this->pdo->prepare('DELETE FROM sqlite_master WHERE type=\'table\'');
-//                $stmt->execute();
-//                echo "Deleted all tables\n";
-//            } catch (Exception $e) {
-//                throw new MigrationError();
-//            }
+            try {
+                $statement = $this->pdo->prepare("SELECT name FROM sqlite_master WHERE type='table'");
+                $statement->execute();
+                $tables = array_diff($statement->fetchAll(PDO::FETCH_COLUMN), ['sqlite_sequence']);
+
+                foreach ($tables as $table) {
+                    $this->pdo->exec('DROP TABLE '. $table);
+                }
+
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
+            } catch (Exception $e) {
+                throw new MigrationError("Ошибка при удалении всей базы данных\n" . $e->getMessage());
+            }
         }
     }
 

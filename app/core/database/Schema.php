@@ -6,6 +6,7 @@ use Exception;
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
+use JetBrains\PhpStorm\NoReturn;
 
 class Schema
 {
@@ -73,15 +74,15 @@ class Schema
     }
 
     /**
+     * Назначение полей
+     *
      * @param string $name
      * @param string $structure
-     * @param bool $not_null
      * @return void
      */
-    private function setVariables(string $name, string $structure, bool $not_null = true): void
+    private function setVariables(string $name, string $structure): void
     {
-        $not_null = $not_null ? 'NOT NULL' : '';
-        $this->variables[$name] = $structure . " $not_null";
+        $this->variables[$name] = $structure . " NOT NULL";
     }
 
     /**
@@ -99,6 +100,10 @@ class Schema
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @return $this
+     */
     public function bigserial(string $id = 'id'): static
     {
         $this->setVariables($id, "BIGSERIAL PRIMARY KEY NOT NULL");
@@ -110,24 +115,54 @@ class Schema
      *
      * @param string $string Название колонки
      * @param int $length Максимальная допустимая длина
-     * @param bool $not_null Разрешить / Запретить значение NULL
      * @return $this
      */
-    public function string(string $string, int $length = 255, bool $not_null = true): static
+    public function string(string $string, int $length = 255): static
     {
-        $this->setVariables($string, "VARCHAR($length)", $not_null);
+        $this->setVariables($string, "VARCHAR($length)");
         return $this;
     }
 
-    public function date(string $date, bool $not_null = true): static
+    /**
+     * Функция для создания переменной типа `integer`
+     *
+     * @throws FailedToOpenStream
+     */
+    public function integer(string $int): static
     {
-        $this->setVariables($date, "DATE", $not_null);
+        $this->setVariables($int, config('database', "integer." . env('DB_DRIVER')));
         return $this;
     }
 
-    public function text()
+    /**
+     * Функция для создания переменной типа `float`
+     *
+     * @param string $float
+     * @return $this
+     * @throws FailedToOpenStream
+     */
+    public function float(string $float): static
     {
-        //TODO сделать тип text
+        $this->setVariables($float, config('database', "float." . env('DB_DRIVER')));
+        return $this;
+    }
+
+    public function date(string $date): static
+    {
+        $this->setVariables($date, "DATE");
+        return $this;
+    }
+
+    /**
+     * Функция для создания переменной типа `text` (SQL)
+     *
+     * @param string $text
+     * @return $this
+     */
+    public function text(string $text): static
+    {
+        $this->setVariables($text, "TEXT");
+        return $this;
     }
 
     /**
@@ -159,25 +194,77 @@ class Schema
      * Тип данных JSONB (pgsql)
      *
      * @param string $jsonb
-     * @param bool $not_null
      * @return $this
      */
-    public function jsonb(string $jsonb, bool $not_null = true): static
+    public function jsonb(string $jsonb): static
     {
-        $this->setVariables($jsonb, "JSONB", $not_null);
+        $this->setVariables($jsonb, "JSONB");
         return $this;
     }
 
-    public function hstore(string $hstore, bool $not_null = true): static
+    public function hstore(string $hstore): static
     {
-        if(!$this->hstore_status) {
+        if (!$this->hstore_status) {
             $db = Application::$app->db;
             $db->pdo->exec("CREATE EXTENSION hstore;");
             $this->hstore_status = true;
         }
-        $this->setVariables($hstore, "hstore", $not_null);
+        $this->setVariables($hstore, "hstore");
 
         return $this;
+    }
+
+    public function nullable(): static
+    {
+        $this->setValueForLastVariable(str_replace(" NOT NULL", "", $this->getLastVariableValue()), false);
+        return $this;
+    }
+
+    public function default(mixed $value): static
+    {
+        if (is_string($value))
+            $this->setValueForLastVariable(" DEFAULT '{$value}'");
+        else
+            $this->setValueForLastVariable(" DEFAULT $value");
+
+        return $this;
+    }
+
+    private function getLastVariableName(): string
+    {
+        return array_key_last($this->variables);
+    }
+
+    private function getLastVariableValue()
+    {
+        return $this->variables[array_key_last($this->variables)];
+    }
+
+    /**
+     * Функция для установки значения для последней переменной
+     *
+     * @param string $value Значение для последней переменной
+     * @param bool $complement Дополнить последнюю переменную или полностью ее
+     * @return void
+     */
+    private function setValueForLastVariable(string $value, bool $complement = true): void
+    {
+        if ($complement)
+            $this->variables[array_key_last($this->variables)] .= $value;
+        else
+            $this->variables[array_key_last($this->variables)] = $value;
+    }
+
+    /**
+     * Функция, которая выводит получившийся запрос на создание поля в таблице
+     * !! ВНИМАНИЕ !!
+     * Функция только для стадии разработки
+     *
+     * @return void
+     */
+    #[NoReturn] public function check(): void
+    {
+        dd($this->getLastVariableValue());
     }
 
 }
