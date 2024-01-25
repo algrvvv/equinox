@@ -6,7 +6,7 @@
         <img src="https://img.shields.io/badge/Framework%20-6A4BE5" style="max-width: 100%;">
     </a>
     <a style="margin: 3px">
-        <img src="https://img.shields.io/badge/Equinox-v1.3.1-blue" style="max-width: 100%;">
+        <img src="https://img.shields.io/badge/Equinox-v1.3.5-blue" style="max-width: 100%;">
     </a>
     <a style="margin: 3px"> 
         <img src="https://img.shields.io/badge/PHP%20-8A2BE2" style="max-width: 100%;">
@@ -79,6 +79,7 @@ DB_PASSWORD=db_password
 ```dotenv
 DB_DRIVER=sqlite
 ```
+Будет автоматически создана бд `app/database/database.sqlite`.
 
 После подключения базы данных напишите в терминале в корне проекта:
 
