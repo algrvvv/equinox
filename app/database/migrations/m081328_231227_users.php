@@ -12,6 +12,8 @@ class m081328_231227_users extends Migration
             $this->table->string('login');
             $this->table->string('email')->unique();
             $this->table->string('password');
+            $this->table->text('message')->nullable();
+            $this->table->integer('likes')->default(0);
             $this->table->timestamps();
         });
     }

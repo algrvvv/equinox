@@ -86,7 +86,8 @@ class Application
 
     public static function style(string $path): void
     {
-        $link = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'];
+        $protocol = isset($_SERVER['HTTPS']) ? "https" : "http";
+        $link = ($_SERVER['REQUEST_SCHEME'] ?? $protocol). "://" . $_SERVER['HTTP_HOST'];
         echo "<link rel='stylesheet' href='" . $link . "/$path'>";
     }
 

@@ -5,6 +5,7 @@ namespace Imissher\Equinox\app\core\database;
 use Exception;
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\ConnectionError;
+use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\exceptions\MigrationError;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use PDO;
@@ -21,7 +22,7 @@ class Database
     public string $db_name;
 
     private array $support_drivers = [
-        "mysql", "pgsql"
+        "mysql", "pgsql", "sqlite"
     ];
 
     /**
@@ -37,16 +38,26 @@ class Database
         $dsn = $db_config['driver'] . ":" . $db_config['dsn'];
         $this->db_name = str_replace('dbname=', '', explode(';', $dsn)[2]);
 
-        $user = $db_config['user'] ?? '';
-        $password = $db_config['password'] ?? '';
+        $user = $db_config['user'] ?? null;
+        $password = $db_config['password'] ?? null;
+
         try {
-            $this->pdo = new PDO($dsn, $user, $password);
+            if ($this->db_driver === 'sqlite') {
+                $pathToSqlite = str_replace("\\", "/", Application::$ROOT_PATH) . "/app/database/database.sqlite";
+                $this->findOrCreateSqliteTable($pathToSqlite);
+                $this->pdo = new PDO("sqlite:" . $pathToSqlite);
+            } else {
+                $this->pdo = new PDO($dsn, $user, $password);
+            }
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             throw new ConnectionError();
         }
     }
 
+    /**
+     * @throws FailedToOpenStream
+     */
     public function applyMigration(): void
     {
         $this->createMigrationTable();
@@ -76,6 +87,7 @@ class Database
 
     /**
      * @throws MigrationError
+     * @throws FailedToOpenStream
      */
     public function downMigration(string $table): void
     {
@@ -90,7 +102,7 @@ class Database
             $className = "Imissher\\Equinox\\app\\database\\migrations\\" . pathinfo("$migration", PATHINFO_FILENAME);
             $instance = new $className();
             if ($instance->drop() !== false) {
-                $this->messageLog("Удаление завершено");
+                $this->messageLog("\033[0;32mУдаление завершено\033[0m");
             }
 
         } else {
@@ -115,15 +127,32 @@ class Database
             try {
                 $this->pdo->exec("drop schema $res cascade;");
                 $this->pdo->exec("create schema $res;");
+
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
             } catch (Exception $e) {
                 throw new MigrationError();
             }
         } elseif ($driver === "mysql") {
-            $dbname = $this->db_name;
             try {
-                $this->pdo->exec("TRUNCATE TABLE $dbname;");
+                $this->pdo->exec("drop database {$this->db_name};");
+                $this->pdo->exec("create database {$this->db_name};");
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
             } catch (Exception $e) {
-                throw new MigrationError();
+                throw new MigrationError("Ошибка при удалении всей базы данных\n" . $e->getMessage());
+            }
+        } elseif ($driver === "sqlite") {
+            try {
+                $statement = $this->pdo->prepare("SELECT name FROM sqlite_master WHERE type='table'");
+                $statement->execute();
+                $tables = array_diff($statement->fetchAll(PDO::FETCH_COLUMN), ['sqlite_sequence']);
+
+                foreach ($tables as $table) {
+                    $this->pdo->exec('DROP TABLE '. $table);
+                }
+
+                $this->messageLog("\033[0;32mВсе базы данных удалены\033[0m");
+            } catch (Exception $e) {
+                throw new MigrationError("Ошибка при удалении всей базы данных\n" . $e->getMessage());
             }
         }
     }
@@ -145,11 +174,11 @@ class Database
      * Создание таблицы миграций
      *
      * @return void
+     * @throws FailedToOpenStream
      */
     private function createMigrationTable(): void
     {
-        $conf = require_once "./app/core/config/database.php";
-        $migration_table = $conf['connections'][$this->db_driver]['migration_table'];
+        $migration_table = config('database', "connections.$this->db_driver.migration_table");
         $this->pdo->exec($migration_table);
     }
 
@@ -172,6 +201,16 @@ class Database
                 $statement = $this->pdo->prepare("INSERT INTO migrations (migration, dbname) VALUES ('$migration', '$db')");
                 return $statement->execute();
             }
+        }
+
+        return true;
+    }
+
+    private function findOrCreateSqliteTable(string $path): true
+    {
+        if (!file_exists($path)) {
+            $fp = fopen($path, 'w');
+            fclose($fp);
         }
 
         return true;

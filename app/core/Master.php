@@ -3,6 +3,7 @@
 namespace Imissher\Equinox\app\core;
 
 use Exception;
+use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\exceptions\UndefinedMethod;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
@@ -13,9 +14,13 @@ class Master
     private Application $app;
     private string $table = '$this->table';
 
+    /**
+     * @throws FailedToOpenStream|UndefinedMethod
+     */
     public function __construct(array $config)
     {
-        //TODO create:model / create:migration -m
+        //TODO Исправить с: create:model / create:migration -m
+        // На create:model -m (так будет правильнее)
         if (count($config) == 1 || $config[0] === false) return;
 
         $this->app = Application::$app;
@@ -44,6 +49,9 @@ class Master
                 break;
             } elseif ($item === '-h' || $item === '--help') {
                 $this->helpMessage();
+            } elseif ($item === "serve") {
+                $this->messageLog("\033[0;32mЗапуск сервера. Не забудьте подключить базу данных!\033[0m");
+                $cd = shell_exec("cd public && php -S localhost:8080");
             } elseif ($item === '-v' || $item === '--version'){
                 $this->messageLog("PHP Version: \033[0;32m$php_version\033[0m");
                 $this->messageLog("App Version: \033[0;32m$app_version\033[0m");
@@ -59,7 +67,7 @@ class Master
     }
 
     /**
-     * @throws UndefinedMethod|exceptions\MigrationError
+     * @throws UndefinedMethod|exceptions\MigrationError|FailedToOpenStream
      */
     private function drop(string $type, string $name, mixed $options): void
     {
@@ -77,6 +85,7 @@ class Master
     private array $options = [
         "-m"
     ];
+
     private function create(string $type, string $name, ?string $options): void
     {
         if(!is_null($options)){
@@ -142,6 +151,9 @@ class $filename extends Migration
         }
     }
 
+    /**
+     * @throws FailedToOpenStream
+     */
     private function migrate(): void
     {
         $this->app->db->applyMigration();

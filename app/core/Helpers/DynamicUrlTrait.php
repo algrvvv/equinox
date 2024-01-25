@@ -13,7 +13,7 @@ trait DynamicUrlTrait
     {
         $router = "";
         $out = ["url" => [], "variables" => []];
-        $url = $_GET['url']; //TODO разобраться с $this->request->getBody() // $_GET помогает
+        $url = $_GET['url'] ?? ''; //TODO разобраться с $this->request->getBody() // $_GET помогает
         if ($this->check_dynamic_url($route)) {
             $dyn_route = array_filter(explode('/', trim($route, '/')));
             $dyn_url = array_filter(explode('/', $url));
