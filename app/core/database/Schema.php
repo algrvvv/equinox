@@ -4,6 +4,7 @@ namespace Imissher\Equinox\app\core\database;
 
 use Exception;
 use Imissher\Equinox\app\core\Application;
+use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 
 class Schema
@@ -88,13 +89,12 @@ class Schema
      *
      * @param string $id
      * @return $this
+     * @throws FailedToOpenStream
      */
     public function id(string $id = 'id'): static
     {
-        //TODO с таким же успехом сюда можно и psql засунуть :o
-        $conf = require "./app/core/config/database.php";
         $driver = Application::$app->db->db_driver;
-        $structure = $conf['autoIncrement'][$driver];
+        $structure = config('database', "autoIncrement.$driver");
         $this->setVariables($id, $structure);
         return $this;
     }

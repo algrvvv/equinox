@@ -5,6 +5,7 @@ namespace Imissher\Equinox\app\core\database;
 use Exception;
 use Imissher\Equinox\app\core\Application;
 use Imissher\Equinox\app\core\exceptions\ConnectionError;
+use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\exceptions\MigrationError;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use PDO;
@@ -54,6 +55,9 @@ class Database
         }
     }
 
+    /**
+     * @throws FailedToOpenStream
+     */
     public function applyMigration(): void
     {
         $this->createMigrationTable();
@@ -83,6 +87,7 @@ class Database
 
     /**
      * @throws MigrationError
+     * @throws FailedToOpenStream
      */
     public function downMigration(string $table): void
     {
@@ -162,11 +167,11 @@ class Database
      * Создание таблицы миграций
      *
      * @return void
+     * @throws FailedToOpenStream
      */
     private function createMigrationTable(): void
     {
-        $conf = require_once "./app/core/config/database.php";
-        $migration_table = $conf['connections'][$this->db_driver]['migration_table'];
+        $migration_table = config('database', "connections.$this->db_driver.migration_table");
         $this->pdo->exec($migration_table);
     }
 

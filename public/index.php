@@ -17,9 +17,6 @@ use Imissher\Equinox\app\controllers\ProfileController;
 use Imissher\Equinox\app\controllers\TestController;
 use Imissher\Equinox\app\core\Application;
 
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
-
 /**
  * |--------------------------------------------------------------------------
  * | $config => Массив полученных данных из `.env` файла, которые нужны
@@ -28,14 +25,14 @@ $dotenv->load();
  */
 $config = [
     'db' => [
-        'driver' => $_ENV['DB_DRIVER'] ?? '',
-        'dsn' => "host=" . ($_ENV['DB_HOST'] ?? '') . ";port=" . ($_ENV['DB_PORT'] ?? '') . ";dbname=" . ($_ENV['DB_NAME'] ?? ''),
-        'user' => $_ENV['DB_USERNAME'] ?? '',
-        'password' => $_ENV['DB_PASSWORD'] ?? ''
+        'driver' => env('DB_DRIVER'),
+        'dsn' => "host=" . env('DB_HOST') . ";port=" . env('DB_PORT') . ";dbname=" . env('DB_NAME'),
+        'user' => env('DB_USERNAME'),
+        'password' => env('DB_PASSWORD')
     ],
     'master' => [false],
-    'display_error' => $_ENV['DISPLAY_ERROR'],
-    'app_version' => $_ENV['APP_VERSION']
+    'display_error' => env('DISPLAY_ERROR'),
+    'app_version' => env('APP_VERSION')
 ];
 
 $app = new Application(dirname(__DIR__), $config);
