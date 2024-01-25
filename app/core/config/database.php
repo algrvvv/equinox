@@ -32,7 +32,19 @@ return [
     ],
 
     "autoIncrement" => [
-        "mysql" => "INT AUTO_INCREMENT PRIMARY KEY",
+        "mysql"  => "INT AUTO_INCREMENT PRIMARY KEY",
         "sqlite" => "INTEGER PRIMARY KEY AUTOINCREMENT"
-    ]
+    ],
+
+    "integer" => [
+        "mysql"  => "INT",
+        "sqlite" => "INTEGER",
+        "pgsql"  => "INTEGER",
+    ],
+
+    "float" => [
+        "mysql"  => "FLOAT",
+        "sqlite" => "REAL",
+        "pgsql"  => "REAL",
+    ],
 ];
