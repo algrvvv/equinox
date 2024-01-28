@@ -206,14 +206,13 @@ class Database
         return true;
     }
 
-    private function findOrCreateSqliteTable(string $path): true
+    private function findOrCreateSqliteTable(string $path): void
     {
         if (!file_exists($path)) {
             $fp = fopen($path, 'w');
             fclose($fp);
         }
 
-        return true;
     }
 
 }

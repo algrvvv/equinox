@@ -10,6 +10,6 @@ class GuestMiddleware extends Middleware
     {
         $isGuest = Application::isGuest();
 
-        if (!$isGuest) $this->redirect('/');
+        if (!$isGuest) redirect('/');
     }
 }
