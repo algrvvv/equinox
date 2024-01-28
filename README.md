@@ -103,7 +103,7 @@ npx tailwindcss -i ./public/assets/style.css -o ./public/dist/style.css --watch
 
 ```php
 #пример маршрута
-Route::get('/', [HomeController::class, 'index'];
+Route::get('/', [HomeController::class, 'index']);
 ```
 
 Класс `Route` поддерживает `get`, `post`, `put`, `patch`, `delete` методы, а также
@@ -172,7 +172,7 @@ php master create:migration name
 > ОЧЕНЬ ВАЖНО!
 
 Важно отметить, что на данный момент они поддерживают
-работу с MySQL и PostgreSQL, но в следующих обновлениях планируется
+работу с MySQL, Sqlite, PostgreSQL, но в следующих обновлениях планируется
 добавить поддержку MongoDB, MariaDB и др.
 
 > Название миграций генерирует в начале дополнительные
@@ -185,12 +185,15 @@ php master create:migration name
 Типы данных, которые доступны при работе с миграциями:
 
 ```php
-# MySQL, PostgreSQL
+# MySQL, Sqlite, PostgreSQL
 $this->table->string('field')->unique();
+$this->table->integer('field');
+$this->table->float('field');
+$this->table->text('field')->default('test message');
 $this->table->date('field');
 $this->table->timestamps();
 
-# MySQL
+# MySQL, Sqlite
 $this->table->id();
 
 # PostgreSQL
