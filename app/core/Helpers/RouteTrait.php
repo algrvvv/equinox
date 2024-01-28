@@ -3,12 +3,12 @@
 namespace Imissher\Equinox\app\core\Helpers;
 
 use Imissher\Equinox\app\core\Application;
-use Imissher\Equinox\app\core\http\Route;
+use Imissher\Equinox\app\core\Facades\src\Router;
 use JetBrains\PhpStorm\NoReturn;
 
 trait RouteTrait
 {
-    private Route $route;
+    private Router $route;
 
     public function __construct()
     {

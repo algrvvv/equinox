@@ -35,35 +35,14 @@ $config = [
     'app_version' => env('APP_VERSION')
 ];
 
-$app = new Application(dirname(__DIR__), $config);
-
-/*
-|--------------------------------------------------------------------------
-| Роуты, которые сайт будет обрабатывать
-|--------------------------------------------------------------------------
-|
-| Поддержка GET, POST, PUT, PATCH, DELETE запросов.
-|
-*/
-
-$app->route->get('/', 'home');
-
-$app->route->get('/profile', [ProfileController::class, 'profile'])->middleware('auth');
-
-$app->route->get('/register', [RegisterController::class, 'index'])->middleware('guest');
-$app->route->post('/register', [RegisterController::class, 'store'])->middleware('guest');
-
-$app->route->get('/login', [LoginController::class, 'index'])->middleware('guest');
-$app->route->post('/login', [LoginController::class, 'login'])->middleware('guest');
-
-$app->route->post('/logout', [LoginController::class, 'logout']);
-
-$app->route->get('/test/{id}/{name}', [TestController::class, 'index']);
-
 /*
 |--------------------------------------------------------------------------
 | Запуск приложения
 |--------------------------------------------------------------------------
 */
+
+$app = new Application(dirname(__DIR__), $config);
+
+require_once "./../routes/web.php";
 
 $app->run();

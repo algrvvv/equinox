@@ -62,7 +62,7 @@ if (!function_exists('dd')) {
         $caller = array_shift($bt);
         $file = str_replace(Application::$ROOT_PATH, "", $caller['file']);
         echo "\033[0;37mDebug: $file : {$caller['line']}\033[0m\n";
-        print_r($data);
+        var_dump($data);
         exit;
     }
 }

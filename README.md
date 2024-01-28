@@ -99,14 +99,15 @@ npx tailwindcss -i ./public/assets/style.css -o ./public/dist/style.css --watch
 
 ## Маршрутизация
 
-Создание нового маршрута происходит в `public/index.php`. Пример подобного роута:
+Создание нового маршрута происходит в `routes/web.php`. Пример подобного роута:
 
 ```php
 #пример маршрута
-$app->route->get('/', [HomeController::class, 'index'];
+Route::get('/', [HomeController::class, 'index'];
 ```
 
-Класс `Route` поддерживает `get`, `post`, `put`, `patch`, `delete` методы.
+Класс `Route` поддерживает `get`, `post`, `put`, `patch`, `delete` методы, а также
+метод `middleware`.
 
 
 ## Отображение
