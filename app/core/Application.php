@@ -4,6 +4,8 @@ namespace Imissher\Equinox\app\core;
 
 use Exception;
 use Imissher\Equinox\app\core\database\Database;
+use Imissher\Equinox\app\core\Facades\Container;
+use Imissher\Equinox\app\core\Facades\src\Router;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
@@ -12,15 +14,27 @@ use Imissher\Equinox\app\core\http\Route;
 class Application
 {
     use MessageLogTrait;
+
     public static string $ROOT_PATH;
+
     private static string $APP_VERSION;
-    public Route $route;
+
+    public Router $route;
+
     public Response $response;
+
     public Request $request;
+
     public View $view;
+
     public Database $db;
+
     public Master $master;
+
     public Session $session;
+
+    public Container $container;
+
     public static Application $app;
 
 
@@ -37,7 +51,9 @@ class Application
             $this->response = new Response();
             $this->view = new View();
             $this->session = new Session();
-            $this->route = new Route($this->request, $this->response, $this->view, $this->session);
+            $this->container = new Container();
+            $this->container->set('router', new Router($this->request, $this->response, $this->view, $this->session));
+            $this->route = $this->container->get('router');
             $this->db = new Database($config['db']);
             $this->master = new Master($config['master']);
         } catch (Exception $e) {
