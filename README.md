@@ -6,7 +6,7 @@
         <img src="https://img.shields.io/badge/Framework%20-6A4BE5" style="max-width: 100%;">
     </a>
     <a style="margin: 3px">
-        <img src="https://img.shields.io/badge/Equinox-v1.3.8-blue" style="max-width: 100%;">
+        <img src="https://img.shields.io/badge/Equinox-v1.4.0-blue" style="max-width: 100%;">
     </a>
     <a style="margin: 3px"> 
         <img src="https://img.shields.io/badge/PHP%20-8A2BE2" style="max-width: 100%;">
