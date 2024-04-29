@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+/*
+* Copyright (c) 2024 p4xt3r. All rights reserved.
+*/
+
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/app/core/Helpers/helpers.php";
 
