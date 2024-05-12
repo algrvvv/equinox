@@ -9,32 +9,64 @@ use Imissher\Equinox\app\core\Facades\src\Router;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
-use Imissher\Equinox\app\core\http\Route;
 
 class Application
 {
     use MessageLogTrait;
 
+    /**
+     * @var string Рутовый путь
+     */
     public static string $ROOT_PATH;
 
+    /**
+     * @var string|mixed Версия приложения
+     */
     private static string $APP_VERSION;
 
+    /**
+     * @var Router|mixed
+     */
     public Router $route;
 
+    /**
+     * @var Response
+     */
     public Response $response;
 
+    /**
+     * @var Request
+     */
     public Request $request;
 
+    /**
+     * @var View
+     */
     public View $view;
 
+    /**
+     * @var Database
+     */
     public Database $db;
 
+    /**
+     * @var Master
+     */
     public Master $master;
 
+    /**
+     * @var Session
+     */
     public Session $session;
 
+    /**
+     * @var Container
+     */
     public Container $container;
 
+    /**
+     * @var Application
+     */
     public static Application $app;
 
 

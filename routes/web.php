@@ -1,4 +1,7 @@
 <?php
+/*
+ * Copyright (c) 2024 p4xt3r. All rights reserved.
+ */
 
 use Imissher\Equinox\app\controllers\LoginController;
 use Imissher\Equinox\app\controllers\ProfileController;
