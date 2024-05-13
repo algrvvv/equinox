@@ -43,7 +43,7 @@ return [
     */
 
     'providers' => [
-        new \Imissher\Equinox\app\providers\AppProvider(),
-        new \Imissher\Equinox\app\providers\CustomFacades()
+        \Imissher\Equinox\app\providers\AppProvider::class,
+        \Imissher\Equinox\app\providers\CustomFacades::class
     ]
 ];

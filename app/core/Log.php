@@ -8,9 +8,9 @@ namespace Imissher\Equinox\app\core;
 use Imissher\Equinox\app\core\Facades\Facade;
 
 /**
- * @method info(string $message): void
- * @method error(string $message): void
- * @method debug(string $message): void
+ * @method static info(string $message, bool $showFile = false): void
+ * @method static error(string $message, bool $showFile = true): void
+ * @method static debug(string $message, bool $showFile = true): void
  */
 class Log extends Facade
 {

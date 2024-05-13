@@ -11,6 +11,7 @@ use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
 use Imissher\Equinox\app\core\interfaces\Provider;
+use \Imissher\Equinox\app\core\Facades\src\Log;
 
 class Application
 {
@@ -89,7 +90,7 @@ class Application
             $this->session = new Session();
             $this->container = new Container();
             $this->container->set('router', new Router($this->request, $this->response, $this->view, $this->session));
-            $this->container->set('log', new Log(config('app', 'log.filename')));
+            $this->container->set('log', new Log());
             $this->route = $this->container->get('router');
             $this->db = new Database($config['db']);
             $this->master = new Master($config['master']);
@@ -125,13 +126,15 @@ class Application
     {
         $providers = config('app', 'providers');
         foreach ($providers as $provider) {
-            /** @var Provider $provider */
-            $provider->boot();
+            /** @var Provider $service */
+            $service = new $provider();
+            $service->boot();
         }
     }
 
     public function error_handler(Exception $e, bool $master = false): void
     {
+        \Imissher\Equinox\app\core\Log::error($e);
         if (!$master) {
             if (gettype($e->getCode()) === 'string') {
                 $this->response->setResponseCode(500);
@@ -141,10 +144,8 @@ class Application
             echo $this->route->render('_error', [
                 'exception' => $e
             ]);
-            Log::error($e->getMessage());
         } else {
             $this->messageLog($e->getMessage());
-            Log::error($e->getMessage());
             exit;
         }
     }
