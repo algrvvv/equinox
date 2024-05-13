@@ -57,7 +57,12 @@ class Master
                 $this->messageLog("App Version: \033[0;32m$app_version\033[0m");
             } elseif ($item === 'migrate') {
                 $this->migrate();
-            } else {
+            } elseif ($item === "-t" ||  $item === "--tests") {
+                $this->messageLog("\033[0;32mЗапуск юнит тестов\033[0m\n");
+                $execCommand = exec('"./vendor/bin/phpunit" tests');
+                echo $execCommand;
+            }
+            else {
                 $this->messageLog("Используйте команду `php master --help` для того, чтобы узнать больше");
             }
 

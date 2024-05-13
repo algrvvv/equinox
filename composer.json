@@ -5,6 +5,11 @@
             "Imissher\\Equinox\\": "./"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "algrvvv",
@@ -15,5 +20,8 @@
         "php": "^8.1",
         "vlucas/phpdotenv": "^5.6",
       "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     }
 }
