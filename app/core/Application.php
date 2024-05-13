@@ -4,11 +4,13 @@ namespace Imissher\Equinox\app\core;
 
 use Exception;
 use Imissher\Equinox\app\core\database\Database;
+use Imissher\Equinox\app\core\exceptions\FailedToOpenStream;
 use Imissher\Equinox\app\core\Facades\Container;
 use Imissher\Equinox\app\core\Facades\src\Router;
 use Imissher\Equinox\app\core\Helpers\MessageLogTrait;
 use Imissher\Equinox\app\core\http\Request;
 use Imissher\Equinox\app\core\http\Response;
+use Imissher\Equinox\app\core\interfaces\Provider;
 
 class Application
 {
@@ -54,6 +56,8 @@ class Application
      */
     public Master $master;
 
+    public static bool $isMaster;
+
     /**
      * @var Session
      */
@@ -85,9 +89,12 @@ class Application
             $this->session = new Session();
             $this->container = new Container();
             $this->container->set('router', new Router($this->request, $this->response, $this->view, $this->session));
+            $this->container->set('log', new Log(config('app', 'log.filename')));
             $this->route = $this->container->get('router');
             $this->db = new Database($config['db']);
             $this->master = new Master($config['master']);
+            self::$isMaster = !($config['master'][0] == false);
+            $this->bootstrap();
         } catch (Exception $e) {
             $this->error_handler($e, $config['master'][0]);
         }
@@ -108,6 +115,21 @@ class Application
 
     }
 
+    /**
+     * Обработка и запуск настроек из всех провайдеров из `app/providers/`
+     *
+     * @return void
+     * @throws FailedToOpenStream
+     */
+    private function bootstrap(): void
+    {
+        $providers = config('app', 'providers');
+        foreach ($providers as $provider) {
+            /** @var Provider $provider */
+            $provider->boot();
+        }
+    }
+
     public function error_handler(Exception $e, bool $master = false): void
     {
         if (!$master) {
@@ -119,8 +141,10 @@ class Application
             echo $this->route->render('_error', [
                 'exception' => $e
             ]);
+            Log::error($e->getMessage());
         } else {
             $this->messageLog($e->getMessage());
+            Log::error($e->getMessage());
             exit;
         }
     }
@@ -135,7 +159,7 @@ class Application
     public static function style(string $path): void
     {
         $protocol = isset($_SERVER['HTTPS']) ? "https" : "http";
-        $link = ($_SERVER['REQUEST_SCHEME'] ?? $protocol). "://" . $_SERVER['HTTP_HOST'];
+        $link = ($_SERVER['REQUEST_SCHEME'] ?? $protocol) . "://" . $_SERVER['HTTP_HOST'];
         echo "<link rel='stylesheet' href='" . $link . "/$path'>";
     }
 
