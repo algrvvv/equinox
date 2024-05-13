@@ -61,9 +61,19 @@ if (!function_exists('dd')) {
         $bt = debug_backtrace();
         $caller = array_shift($bt);
         $file = str_replace(Application::$ROOT_PATH, "", $caller['file']);
-        echo "\033[0;37mDebug: $file : {$caller['line']}\033[0m\n";
-        var_dump($data);
+
+        if (Application::$isMaster) {
+            echo "\033[0;37mDebug: $file : {$caller['line']}\033[0m\n";
+            var_dump($data);
+        } else {
+            echo "<u>Debug: $file : {$caller['line']}</u><br>";
+            echo "<pre>";
+            var_dump($data);
+            echo "</pre>";
+        }
         exit;
+
+
     }
 }
 
